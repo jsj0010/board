@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 import static org.springframework.http.HttpStatus.*;
 
-
+@Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
     // Common
