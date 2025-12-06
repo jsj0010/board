@@ -1,4 +1,4 @@
-package com.chip.board.global.base.config.security;
+package com.chip.board.global.config.security;
 
 import com.chip.board.global.base.exception.ExceptionHandlerFilter;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +36,22 @@ public class SecurityConfig {
 
                 .cors(cors -> cors.configurationSource(CorsConfig.corsConfigurationSource()))
 
-                .authorizeHttpRequests(req ->
-                        req.anyRequest().permitAll())
+                .authorizeHttpRequests(auth -> auth
+                        // Swagger 허용
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+
+                        // 인증 없이 접근 가능한 엔드포인트
+                        .requestMatchers(
+                                "/register/**",
+                                "/api/auth/login"
+                        ).permitAll()
+                        // 나머지는 JWT 필요
+                        .anyRequest().authenticated()
+                )
 
                 .build();
     }

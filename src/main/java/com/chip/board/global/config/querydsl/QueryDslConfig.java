@@ -1,4 +1,4 @@
-package com.chip.board.global.base.config.querydsl;
+package com.chip.board.global.config.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

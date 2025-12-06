@@ -40,3 +40,5 @@ out/
 docker-infra/
 
 .env
+
+src/main/resources/application-local.properties

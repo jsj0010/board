@@ -1,4 +1,4 @@
-package com.chip.board.global.base.config.redis;
+package com.chip.board.global.config.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

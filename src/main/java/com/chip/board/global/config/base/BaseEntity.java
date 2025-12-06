@@ -1,4 +1,4 @@
-package com.chip.board.global.base.config.base;
+package com.chip.board.global.config.base;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
