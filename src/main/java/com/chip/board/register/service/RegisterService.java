@@ -73,7 +73,7 @@ public class RegisterService {
     }
 
     private int createNumber() { // 메일 코드 생성
-        return (int)(Math.random() * (900000)) + 100000; // 최소 100000인 6자리 숫자
+        return new java.security.SecureRandom().nextInt(900000) + 100000; // 최소 100000인 6자리 숫자
     }
 
     public void checkVerificationNumber(MailVerifyRequest mailVerifyRequest) { // 이메일 코드 일치 검증
