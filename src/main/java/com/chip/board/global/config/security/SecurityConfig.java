@@ -1,6 +1,7 @@
 package com.chip.board.global.config.security;
 
 import com.chip.board.global.base.exception.ExceptionHandlerFilter;
+import com.chip.board.global.jwt.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
     private final ExceptionHandlerFilter exceptionHandlerFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
@@ -32,7 +34,7 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
 
                 .addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)
-                //.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
                 .cors(cors -> cors.configurationSource(CorsConfig.corsConfigurationSource()))
 
@@ -52,7 +54,6 @@ public class SecurityConfig {
                         // 나머지는 JWT 필요
                         .anyRequest().authenticated()
                 )
-
                 .build();
     }
 }
