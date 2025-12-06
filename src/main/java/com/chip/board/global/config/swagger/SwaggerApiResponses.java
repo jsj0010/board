@@ -6,12 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
-///**
-// * 이 애너테이션은 API 엔드 포인트에서의 성공 및 오류 응답에 대한 설명을 정의합니다.
-// *
-// * @see kr.ac.kumoh.likelion.bouquet.global.config.swagger.SwaggerApiSuccessResponse
-// * @see kr.ac.kumoh.likelion.bouquet.global.config.swagger.SwaggerApiFailedResponse
-// */
+/**
+ * 이 애너테이션은 API 엔드 포인트에서의 성공 및 오류 응답에 대한 설명을 정의합니다.
+ *
+ * @see com.chip.board.global.config.swagger.SwaggerApiSuccessResponse
+ * @see com.chip.board.global.config.swagger.SwaggerApiFailedResponse
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SwaggerApiResponses {

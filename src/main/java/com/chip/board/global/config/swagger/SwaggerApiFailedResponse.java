@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
  * 이 애너테이션은 API 호출이 실패했을 때의 응답 HTTP 상태 코드와 응답 본문에 대한
  * 스키마를 명시할 수 있습니다.
  *
- * @see kr.ac.kumoh.likelion.bouquet.global.config.swagger.SwaggerApiResponses
- * @see kr.ac.kumoh.likelion.bouquet.global.base.exception.ErrorCode
+ * @see com.chip.board.global.config.swagger.SwaggerApiResponses
+ * @see com.chip.board.bouquet.global.base.exception.ErrorCode
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
