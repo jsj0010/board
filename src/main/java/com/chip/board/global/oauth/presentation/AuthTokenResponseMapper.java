@@ -15,14 +15,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class AuthHttpResponseMapper {
+public class AuthTokenResponseMapper {
 
     private static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
 
     private final CookieUtil cookieUtil;
     private final RefreshTokenProperties refreshTokenProperties;
 
-    public ResponseEntity<ResponseBody<AccessTokenData>> toLoginResponse(TokenPair pair) {
+    public ResponseEntity<ResponseBody<AccessTokenData>> toTokenPairResponse(TokenPair pair) {
         AccessTokenData accessToken = pair.accessToken();
         RefreshTokenData refreshToken = pair.refreshToken();
 

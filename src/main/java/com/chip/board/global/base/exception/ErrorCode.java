@@ -12,7 +12,7 @@ public enum ErrorCode {
     // Common
     UNEXPECTED_SERVER_ERROR(INTERNAL_SERVER_ERROR,"COM_001","예상치 못한 서버 오류가 발생했습니다."),
     BINDING_ERROR(BAD_REQUEST,"COM_002","요청 데이터 변환 과정에서 오류가 발생했습니다."),
-    ESSENTIAL_FIELD_MISSING_ERROR(NO_CONTENT , "COM_003","필수 필드를 누락했습니다."),
+    ESSENTIAL_FIELD_MISSING_ERROR(BAD_REQUEST , "COM_003","필수 필드를 누락했습니다."),
     INVALID_ENDPOINT(NOT_FOUND, "COM_004", "잘못된 API URI로 요청했습니다."),
     INVALID_HTTP_METHOD(METHOD_NOT_ALLOWED, "COM_005","잘못된 HTTP 메서드로 요청했습니다."),
 
@@ -22,7 +22,8 @@ public enum ErrorCode {
     JWT_EXPIRED(UNAUTHORIZED, "AUTH_003", "인증 정보가 만료되었습니다."),
     JWT_INVALID(UNAUTHORIZED, "AUTH_004", "인증 정보가 잘못되었습니다."),
     JWT_NOT_EXIST(UNAUTHORIZED, "AUTH_005", "인증 정보가 존재하지 않습니다."),
-    INVALID_LOGIN(HttpStatus.UNAUTHORIZED,"A001","아이디 또는 비밀번호가 일치하지 않습니다."),
+    INVALID_LOGIN(HttpStatus.UNAUTHORIZED,"AUTH_006","아이디 또는 비밀번호가 일치하지 않습니다."),
+    REFRESH_TOKEN_INVALID(UNAUTHORIZED, "AUTH_007", "RefreshToken이 존재하지 않습니다."),
 
     //User
     USER_ALREADY_EXIST(HttpStatus.CONFLICT,"USER_001","이미 존재하는 회원입니다."),
@@ -34,7 +35,6 @@ public enum ErrorCode {
     EXPIRED_EMAIL_CODE(BAD_REQUEST,"USER_007","만료된 인증번호입니다."),
     EMAIL_NOT_VERIFIED(UNAUTHORIZED,"USER_008","이메일 인증이 완료되지 않았습니다."),
     INVALID_DEPARTMENT(BAD_REQUEST,"USER_009","해당하는 학과가 존재하지 않습니다."),
-    USER_OVERDUE(UNAUTHORIZED,"USER_010","연체된 유저입니다."),
     PASSWORD_REQUIRED(BAD_REQUEST,"USER_011","변경할 비밀번호를 입력해주세요."),
     INVALID_PASSWORD_CONFIRM(BAD_REQUEST,"USER_012","비밀번호와 비밀번호 확인이 일치하지 않습니다."),
 

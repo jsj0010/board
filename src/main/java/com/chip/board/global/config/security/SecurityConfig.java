@@ -49,7 +49,7 @@ public class SecurityConfig {
                         // 인증 없이 접근 가능한 엔드포인트
                         .requestMatchers(
                                 "/register/**",
-                                "/api/auth/login"
+                                "/api/auth/**"
                         ).permitAll()
                         // 나머지는 JWT 필요
                         .anyRequest().authenticated()
