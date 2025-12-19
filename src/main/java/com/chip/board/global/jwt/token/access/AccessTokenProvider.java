@@ -10,6 +10,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.WeakKeyException;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -22,11 +23,11 @@ public class AccessTokenProvider {
     private final long accessTtlSeconds;
 
     public AccessTokenProvider(JwtProperties props) {
-        byte[] secretBytes = props.secret().getBytes(StandardCharsets.UTF_8);
-        if (secretBytes.length < 32) { // 32 bytes = 256 bits
-            throw new IllegalArgumentException("JWT secret key must be at least 256 bits (32 bytes) long for HS256 algorithm.");
+        try {
+            this.secretKey = Keys.hmacShaKeyFor(props.secret().getBytes(StandardCharsets.UTF_8));
+        } catch (WeakKeyException e) {
+            throw new IllegalStateException("jwt.secret is too short. HS256 requires at least 32 bytes.", e);
         }
-        this.secretKey = Keys.hmacShaKeyFor(secretBytes);
         this.issuer = props.issuer();
         this.accessTtlSeconds = props.accessTtlSeconds();
     }
