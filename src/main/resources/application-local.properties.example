@@ -47,3 +47,6 @@ email.sender={YOUR_EMAIL}
 swagger.server-url=http://localhost:8080
 swagger.description=Local API Server
 
+# Actuator
+management.endpoints.web.exposure.include=health,info
+logging.level.org.springframework.security=TRACE
