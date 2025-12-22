@@ -29,6 +29,7 @@ public class UserRegisterRequest {
             regexp = "^(\\d{8}|\\d{10})$")
     private String studentId;
 
+    @NotBlank
     @NotNull
     private Integer grade;
 
