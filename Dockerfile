@@ -1,15 +1,11 @@
 # ---- Build stage ----
-FROM gradle:8.12.0-jdk21 AS build
+FROM gradle:8.12.0-jdk21 AS builder
 WORKDIR /app
 
 COPY build.gradle settings.gradle ./
-
-# ✅ (권장) dependencies 단계 제거: toolchain 이슈/네트워크 이슈 줄임
-
 COPY src ./src
 RUN gradle --no-daemon clean bootJar -x test
 
-# ✅ bootJar(plain 제외)만 집기
 RUN set -e; \
     JAR_PATH="$(ls -1 build/libs/*.jar | grep -v plain | head -n 1)"; \
     cp "$JAR_PATH" /app/app.jar
@@ -18,13 +14,15 @@ RUN set -e; \
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
-RUN useradd -r -u 10001 -g root spring
-COPY --from=build /app/app.jar /app/app.jar
+RUN groupadd -r -g 10001 spring \
+ && useradd  -r -u 10001 -g spring spring
 
-RUN mkdir -p /app/logs && chown -R spring:root /app
+COPY --from=builder --chown=spring:spring /app/app.jar /app/app.jar
 
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
   && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /app/logs && chown -R spring:spring /app
 
 USER spring
 ENV JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"

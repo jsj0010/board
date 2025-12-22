@@ -31,7 +31,6 @@ public class SecurityConfig {
 
     private static final String[] ACTUATOR_WHITELIST = {
             "/actuator/health",
-            "/actuator/health/**"
     };
 
     private static final String[] AUTH_WHITELIST = {
