@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * 스키마를 명시할 수 있습니다.
  *
  * @see com.chip.board.global.config.swagger.SwaggerApiResponses
- * @see com.chip.board.bouquet.global.base.exception.ErrorCode
+ * @see com.chip.board.global.base.exception.ErrorCode
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
