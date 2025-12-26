@@ -39,7 +39,8 @@ out/
 ### Docker Infra ###
 docker-infra/
 
+# env files (secrets)
 .env
+.env.prod
 
-src/main/resources/application-local.properties
-src/main/resources/application-docker.properties
+

@@ -1,0 +1,13 @@
+services:
+  app:
+    # local은 build로 덮어씀, prod는 image로 덮어씀
+    # build: .
+    # image: board:latest
+
+    env_file:
+      - .env
+
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+
+    restart: unless-stopped
