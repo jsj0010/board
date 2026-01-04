@@ -24,14 +24,8 @@ services:
       retries: 30
 
   app:
-    image: board:latest
+    image: earlybird-app:latest
     env_file: [.env.prod]
-    environment:
-      SPRING_DATASOURCE_URL: ${DB_URL}
-      SPRING_DATASOURCE_USERNAME: ${DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
-      SPRING_DATA_REDIS_HOST: ${REDIS_HOST}
-      SPRING_DATA_REDIS_PORT: ${REDIS_PORT}
     ports: ["8080:8080"]
     restart: unless-stopped
     depends_on:
