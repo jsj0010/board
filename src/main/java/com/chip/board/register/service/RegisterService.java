@@ -52,6 +52,7 @@ public class RegisterService {
                     .studentId(userRegisterRequest.getStudentId())
                     .grade(userRegisterRequest.getGrade())
                     .role(Role.USER)
+                    .bojId((userRegisterRequest.getBojId()))
                     .phoneNumber(userRegisterRequest.getPhoneNumber())
                     .build();
             userRepository.save(user);

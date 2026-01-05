@@ -61,4 +61,8 @@ public class CustomUserDetails implements UserDetails {
     public Role getRole() {
         return user.getRole();
     }
+
+    public String getBojId() { return user.getBojId();}
+
+    public String getPhoneNumber() { return user.getPhoneNumber();}
 }

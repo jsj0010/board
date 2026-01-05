@@ -9,7 +9,15 @@ import org.hibernate.annotations.SQLRestriction;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user")
+@Table(
+        name = "`user`",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_user_boj_id", columnNames = {"boj_id", "is_deleted"}),
+                @UniqueConstraint(name = "uk_user_username", columnNames = {"username", "is_deleted"}),
+                @UniqueConstraint(name = "uk_user_student_id", columnNames = {"student_id", "is_deleted"}),
+                @UniqueConstraint(name = "uk_user_phone_number", columnNames = {"phone_number", "is_deleted"})
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE user SET is_deleted = true WHERE user_id = ?")
@@ -43,6 +51,9 @@ public class User {
     @Column(length = 20, nullable = false)
     private Role role;
 
+    @Column(name = "boj_id", nullable = false, length = 64)
+    private String bojId;
+
     @Column(name = "phone_number", nullable = false, length = 20)
     private String phoneNumber;
 
@@ -65,6 +76,7 @@ public class User {
             String studentId,
             int grade,
             Role role,
+            String bojId,
             String phoneNumber
 
     ) {
@@ -75,6 +87,7 @@ public class User {
         this.studentId = studentId;
         this.grade = grade;
         this.role = role;
+        this.bojId = bojId;
         this.phoneNumber = phoneNumber;
     }
 
