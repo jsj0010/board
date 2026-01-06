@@ -75,7 +75,6 @@ public class RegisterService {
         }
     }
 
-
     private ServiceException mapDuplicateKeyToServiceException(DataIntegrityViolationException e) {
         String msg = getDeepMessage(e);
 
@@ -87,6 +86,9 @@ public class RegisterService {
         }
         if (msg.contains("uk_user_phone_number")) {
             return new ServiceException(ErrorCode.DUPLICATE_PHONE_NUMBER);
+        }
+        if (msg.contains("uk_user_username")) {
+            return new ServiceException(ErrorCode.USER_ALREADY_EXIST);
         }
 
         return new ServiceException(ErrorCode.UNEXPECTED_SERVER_ERROR);
