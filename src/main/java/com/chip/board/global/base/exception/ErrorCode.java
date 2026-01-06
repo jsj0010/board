@@ -37,9 +37,14 @@ public enum ErrorCode {
     INVALID_DEPARTMENT(BAD_REQUEST,"USER_009","해당하는 학과가 존재하지 않습니다."),
     PASSWORD_REQUIRED(BAD_REQUEST,"USER_011","변경할 비밀번호를 입력해주세요."),
     INVALID_PASSWORD_CONFIRM(BAD_REQUEST,"USER_012","비밀번호와 비밀번호 확인이 일치하지 않습니다."),
+    DUPLICATE_BOJ_ID(CONFLICT, "USER_013", "이미 등록된 BOJ 아이디입니다."),
+    DUPLICATE_STUDENT_ID(CONFLICT, "USER_014", "이미 등록된 학번입니다."),
+    DUPLICATE_PHONE_NUMBER(CONFLICT, "USER_015", "이미 등록된 전화번호입니다."),
 
 
-    ;
+    //Sync
+    SYNC_STATE_ALREADY_EXISTS(CONFLICT, "SYNC_001", "동기화 상태가 이미 생성되어 있습니다.");
+
     private final HttpStatus status;
     private final String code;
     private final String message;
