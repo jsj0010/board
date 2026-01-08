@@ -1,8 +1,9 @@
 package com.chip.board.global.jwt.authentication;
 
+import com.chip.board.global.base.exception.ErrorCode;
+import com.chip.board.global.base.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -29,7 +30,7 @@ public class UsernamePasswordAuthenticationProvider implements AuthenticationPro
 
         // 2) 비밀번호 검증
         if (!passwordEncoder.matches(rawPassword, userDetails.getPassword())) {
-            throw new BadCredentialsException("Invalid username or password");
+            throw new ServiceException(ErrorCode.INVALID_LOGIN);
         }
 
         // 3) 인증 성공 토큰 생성

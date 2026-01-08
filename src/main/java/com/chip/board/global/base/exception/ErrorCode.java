@@ -43,7 +43,16 @@ public enum ErrorCode {
 
 
     //Sync
-    SYNC_STATE_ALREADY_EXISTS(CONFLICT, "SYNC_001", "동기화 상태가 이미 생성되어 있습니다.");
+    SYNC_STATE_ALREADY_EXISTS(CONFLICT, "SYNC_001", "동기화 상태가 이미 생성되어 있습니다."),
+
+    // ===== Challenge =====
+    CHALLENGE_RANGE_INVALID(HttpStatus.BAD_REQUEST, "CHALLENGE_001", "챌린지 기간이 올바르지 않습니다. (startAt < endAt)"),
+    CHALLENGE_RANGE_OVERLAPS(HttpStatus.CONFLICT, "CHALLENGE_002", "다른 챌린지와 기간이 겹칩니다."),
+    CHALLENGE_ALREADY_EXISTS_SAME_RANGE(HttpStatus.CONFLICT, "CHALLENGE_003", "동일한 기간의 챌린지가 이미 존재합니다."),
+    CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE_004", "챌린지를 찾을 수 없습니다."),
+    CHALLENGE_STATUS_INVALID_TRANSITION(HttpStatus.CONFLICT, "CHALLENGE_005", "챌린지 상태 전이가 올바르지 않습니다."),
+    CHALLENGE_NOT_IN_ACTIVE_RANGE(HttpStatus.CONFLICT, "CHALLENGE_006", "현재 시각이 챌린지 진행 기간이 아닙니다."),
+    CHALLENGE_TITLE_INVALID(HttpStatus.BAD_REQUEST, "CHALLENGE_007", "챌린지 제목이 올바르지 않습니다.");
 
     private final HttpStatus status;
     private final String code;

@@ -38,6 +38,11 @@ public class SecurityConfig {
             "/register/**"
     };
 
+    private static final String[] PUBLIC_WHITELIST = {
+            "/api/",
+
+    };
+
     @Bean
     public SecurityFilterChain httpSecurity(HttpSecurity http) throws Exception {
         return http
