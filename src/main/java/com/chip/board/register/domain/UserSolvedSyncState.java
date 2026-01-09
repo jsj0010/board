@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 @Table(
         name = "user_solved_sync_state",
         indexes = {
-                @Index(name = "idx_sync_progress", columnList = "sync_in_progress,user_id"),
                 @Index(name = "idx_sync_baseline_ready", columnList = "baseline_ready,user_id")
         }
 )
@@ -34,13 +33,9 @@ public class UserSolvedSyncState {
     @Builder.Default
     private boolean baselineReady = false;
 
-    @Column(name = "baseline_next_page", nullable = false)
+    @Column(name = "next_page", nullable = false)
     @Builder.Default
-    private int baselineNextPage = 1;
-
-    @Column(name = "sync_in_progress", nullable = false)
-    @Builder.Default
-    private boolean syncInProgress = false;
+    private int NextPage = 1;
 
     @Column(name = "last_solved_count", nullable = false)
     @Builder.Default
@@ -52,17 +47,12 @@ public class UserSolvedSyncState {
     // 필요하면 상태 변경 메서드들 추가
     public void markBaselineReady() {
         this.baselineReady = true;
-        this.baselineNextPage = 1;
-    }
-
-    public void startSync() {
-        this.syncInProgress = true;
+        this.NextPage = 1;
     }
 
     public void finishSync(int newSolvedCount) {
-        this.syncInProgress = false;
         this.lastSolvedCount = newSolvedCount;
-        this.baselineNextPage = 1;
+        this.NextPage = 1;
         this.lastSyncAt = LocalDateTime.now();
     }
 }
