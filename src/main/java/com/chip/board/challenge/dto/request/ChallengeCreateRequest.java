@@ -10,5 +10,5 @@ import java.time.LocalDateTime;
 public record ChallengeCreateRequest(
         @NotBlank @Size(max = 100) String title,
         @NotNull LocalDate startDate,
-        @NotNull LocalDate  endDate
+        @NotNull LocalDate endDate
 ) { }

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -32,6 +31,7 @@ public class ChallengeCommandService {
         LocalDateTime startAt = req.startDate().atStartOfDay(); // 00:00
         LocalDateTime endAt = req.endDate().plusDays(1).atStartOfDay(); // 다음날 00:00
 
+        //활성 챌린지 하나로만 강제
         if (challengeRepository.existsByStatusIn(List.of(ChallengeStatus.SCHEDULED, ChallengeStatus.ACTIVE))) {
             throw new ServiceException(ErrorCode.CHALLENGE_ALREADY_EXISTS);
         }

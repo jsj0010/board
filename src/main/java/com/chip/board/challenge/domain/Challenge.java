@@ -45,7 +45,7 @@ public class Challenge extends BaseEntity {
         }
         this.title = title;
         this.startAt = startDate;
-        this.endAt = endDate.plusDays(1);
+        this.endAt = endDate;
         this.status = ChallengeStatus.SCHEDULED;
     }
 

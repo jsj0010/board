@@ -1,6 +1,5 @@
 package com.chip.board.challenge.servcie;
 
-import com.chip.board.challenge.domain.Challenge;
 import com.chip.board.challenge.domain.ChallengeStatus;
 import com.chip.board.challenge.repository.ChallengeRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,28 +25,21 @@ public class ChallengeStatusScheduler {
     public void updateChallengeStatus() {
         LocalDateTime now = LocalDateTime.now(clock);
 
-        Challenge challenge = challengeRepository
+        challengeRepository
                 .findFirstByStatusIn(List.of(ChallengeStatus.SCHEDULED, ChallengeStatus.ACTIVE))
-                .orElse(null);
-
-        if (challenge == null) {
-            return;
-        }
-
-        if (!now.isBefore(challenge.getEndAt())) {
-            if (challenge.getStatus() != ChallengeStatus.CLOSED) {
-                challenge.close();
-                log.info("[ChallengeScheduler] closed. id={}, endAt={}", challenge.getChallengeId(), challenge.getEndAt());
-            }
-            return;
-        }
-
-        if (challenge.getStatus() == ChallengeStatus.SCHEDULED
-                && !now.isBefore(challenge.getStartAt())
-                && now.isBefore(challenge.getEndAt())) {
-            challenge.activate(now);
-            log.info("[ChallengeScheduler] activated. id={}, startAt={}, endAt={}",
-                    challenge.getChallengeId(), challenge.getStartAt(), challenge.getEndAt());
-        }
+                .ifPresent(challenge -> {
+                    if (!now.isBefore(challenge.getEndAt())) {
+                        if (challenge.getStatus() != ChallengeStatus.CLOSED) {
+                            challenge.close();
+                            log.info("[ChallengeScheduler] closed. id={}, endAt={}", challenge.getChallengeId(), challenge.getEndAt());
+                        }
+                    } else if (challenge.getStatus() == ChallengeStatus.SCHEDULED
+                            && !now.isBefore(challenge.getStartAt())
+                            && now.isBefore(challenge.getEndAt())) {
+                        challenge.activate(now);
+                        log.info("[ChallengeScheduler] activated. id={}, startAt={}, endAt={}",
+                                challenge.getChallengeId(), challenge.getStartAt(), challenge.getEndAt());
+                    }
+                });
     }
 }
