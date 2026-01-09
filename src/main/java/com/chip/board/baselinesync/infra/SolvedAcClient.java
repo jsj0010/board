@@ -1,53 +1,95 @@
 package com.chip.board.baselinesync.infra;
 
+import com.chip.board.cooldown.infra.ApiCooldownActiveException;
+import com.chip.board.cooldown.infra.ExternalApiCooldownJdbcRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClient;
 
-import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
 @Component
 public class SolvedAcClient {
 
-    private final WebClient webClient;
+    private static final String API_KEY = "solved_ac";
+    private static final int COOLDOWN_MINUTES = 15;
 
-    public SolvedAcClient(WebClient.Builder builder) {
-        this.webClient = builder
-                .baseUrl("https://solved.ac/api/v3")
+    private final RestClient restClient;
+    private final ExternalApiCooldownJdbcRepository cooldownRepo;
+
+    public SolvedAcClient(RestClient.Builder builder,
+                          ExternalApiCooldownJdbcRepository cooldownRepo,
+                          @Value("${solved-ac.base-url}") String baseUrl) {
+
+        this.restClient = builder
+                .baseUrl(baseUrl)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader("x-solvedac-language", "ko")
                 .build();
+
+        this.cooldownRepo = cooldownRepo;
     }
 
     public SolvedAcUserShowResponse userShow(String handle) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/user/show")
-                        .queryParam("handle", handle)
-                        .build())
-                .retrieve()
-                .bodyToMono(SolvedAcUserShowResponse.class)
-                .timeout(Duration.ofSeconds(4))
-                .block();
+        assertNotCooldown();
+
+        try {
+            return restClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/user/show")
+                            .queryParam("handle", handle)
+                            .build())
+                    .retrieve()
+                    .body(SolvedAcUserShowResponse.class);
+
+        } catch (HttpClientErrorException e) {
+            throw handleRateLimitThenRethrow(e);
+        }
     }
 
     public SolvedAcSearchProblemResponse searchSolvedProblems(String handle, int page) {
-        return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/search/problem")
-                        .queryParam("query", "solved_by:" + handle)
-                        .queryParam("page", page)
-                        .queryParam("sort", "id")
-                        .queryParam("direction", "asc")
-                        .build())
-                .retrieve()
-                .bodyToMono(SolvedAcSearchProblemResponse.class)
-                .timeout(Duration.ofSeconds(6))
-                .block();
+        assertNotCooldown();
+
+        try {
+            return restClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/search/problem")
+                            .queryParam("query", "solved_by:" + handle)
+                            .queryParam("page", page)
+                            .queryParam("sort", "id")
+                            .queryParam("direction", "asc")
+                            .build())
+                    .retrieve()
+                    .body(SolvedAcSearchProblemResponse.class);
+
+        } catch (HttpClientErrorException e) {
+            throw handleRateLimitThenRethrow(e);
+        }
+    }
+
+    private void assertNotCooldown() {
+        LocalDateTime until = cooldownRepo.findActiveCooldownUntil(API_KEY, COOLDOWN_MINUTES);
+        if (until != null) {
+            throw new ApiCooldownActiveException(API_KEY, until);
+        }
+    }
+
+    private RuntimeException handleRateLimitThenRethrow(HttpClientErrorException e) {
+        if (e.getStatusCode().value() == 429) {
+            cooldownRepo.openCooldownNow(API_KEY, 429);
+            LocalDateTime until = cooldownRepo.findActiveCooldownUntil(API_KEY, COOLDOWN_MINUTES);
+            throw new ApiCooldownActiveException(
+                    API_KEY,
+                    until != null ? until : LocalDateTime.now().plusMinutes(COOLDOWN_MINUTES)
+            );
+        }
+        return e;
     }
 
     public record SolvedAcUserShowResponse(Integer solvedCount) {}

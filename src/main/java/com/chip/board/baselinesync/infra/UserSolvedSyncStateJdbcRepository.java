@@ -14,7 +14,6 @@ public class UserSolvedSyncStateJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    
     //baseline_ready=false 중 1명을 잡음
     public Optional<BaselineTarget> pickOneForBaseline() {
         String sql = """
@@ -22,6 +21,8 @@ public class UserSolvedSyncStateJdbcRepository {
         FROM user_solved_sync_state s
         JOIN user u ON u.user_id = s.user_id
         WHERE s.baseline_ready = 0
+        AND u.boj_id IS NOT NULL
+        AND TRIM(u.boj_id) <> ''
         ORDER BY (s.next_page > 1) DESC, s.user_id ASC
         LIMIT 1
         FOR UPDATE SKIP LOCKED

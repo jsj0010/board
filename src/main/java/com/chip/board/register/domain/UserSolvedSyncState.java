@@ -35,7 +35,7 @@ public class UserSolvedSyncState {
 
     @Column(name = "next_page", nullable = false)
     @Builder.Default
-    private int NextPage = 1;
+    private int nextPage = 1;
 
     @Column(name = "last_solved_count", nullable = false)
     @Builder.Default
@@ -47,12 +47,12 @@ public class UserSolvedSyncState {
     // 필요하면 상태 변경 메서드들 추가
     public void markBaselineReady() {
         this.baselineReady = true;
-        this.NextPage = 1;
+        this.nextPage = 1;
     }
 
     public void finishSync(int newSolvedCount) {
         this.lastSolvedCount = newSolvedCount;
-        this.NextPage = 1;
+        this.nextPage = 1;
         this.lastSyncAt = LocalDateTime.now();
     }
 }
