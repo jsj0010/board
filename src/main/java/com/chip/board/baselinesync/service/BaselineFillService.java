@@ -78,7 +78,8 @@ public class BaselineFillService {
             if (mapped.isEmpty()) {
                 log.warn("All items filtered out. will retry. userId={}, handle={}, nextPage={}, rawItems={}",
                         t.userId(), t.bojHandle(), t.nextPage(), items.size());
-                return; 
+                stateRepo.advancePage(t.userId());
+                return;
             }
 
             solvedRepo.upsertBatch(t.userId(), mapped);
