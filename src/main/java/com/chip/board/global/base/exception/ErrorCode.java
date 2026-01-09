@@ -52,7 +52,12 @@ public enum ErrorCode {
     CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHALLENGE_004", "챌린지를 찾을 수 없습니다."),
     CHALLENGE_STATUS_INVALID_TRANSITION(HttpStatus.CONFLICT, "CHALLENGE_005", "챌린지 상태 전이가 올바르지 않습니다."),
     CHALLENGE_NOT_IN_ACTIVE_RANGE(HttpStatus.CONFLICT, "CHALLENGE_006", "현재 시각이 챌린지 진행 기간이 아닙니다."),
-    CHALLENGE_TITLE_INVALID(HttpStatus.BAD_REQUEST, "CHALLENGE_007", "챌린지 제목이 올바르지 않습니다.");
+    CHALLENGE_ALREADY_EXISTS(HttpStatus.CONFLICT, "CHALLENGE_007", "진행중이거나 예정된 챌린지가 이미 존재합니다.");
+
+
+
+
+
 
     private final HttpStatus status;
     private final String code;

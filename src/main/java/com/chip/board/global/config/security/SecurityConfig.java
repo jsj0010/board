@@ -39,7 +39,7 @@ public class SecurityConfig {
     };
 
     private static final String[] PUBLIC_WHITELIST = {
-            "/api/",
+            "/api/challenges/info",
 
     };
 
@@ -60,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .requestMatchers(ACTUATOR_WHITELIST).permitAll()
                         .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .requestMatchers(PUBLIC_WHITELIST).permitAll()
                         .anyRequest().authenticated()
                 )
 

@@ -2,11 +2,11 @@ package com.chip.board.challenge.domain;
 
 import com.chip.board.global.base.exception.ErrorCode;
 import com.chip.board.global.base.exception.ServiceException;
+import com.chip.board.global.config.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
         }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Challenge {
+public class Challenge extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,14 +39,13 @@ public class Challenge {
     @Column(name = "status", nullable = false)
     private ChallengeStatus status = ChallengeStatus.SCHEDULED;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    public Challenge(String title, LocalDateTime startAt, LocalDateTime endAt) {
+    public Challenge(String title, LocalDateTime startDate, LocalDateTime endDate) {
+        if (endDate.isBefore(startDate)) {
+            throw new ServiceException(ErrorCode.CHALLENGE_RANGE_INVALID);
+        }
         this.title = title;
-        this.startAt = startAt;
-        this.endAt = endAt;
+        this.startAt = startDate;
+        this.endAt = endDate;
         this.status = ChallengeStatus.SCHEDULED;
     }
 
