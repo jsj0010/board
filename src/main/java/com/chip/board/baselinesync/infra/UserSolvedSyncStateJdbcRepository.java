@@ -3,7 +3,6 @@ package com.chip.board.baselinesync.infra;
 import com.chip.board.baselinesync.model.BaselineTarget;
 import com.chip.board.baselinesync.model.DeltaPageTarget;
 import com.chip.board.baselinesync.model.SyncTarget;
-import com.chip.board.baselinesync.model.UserSolvedDeltaTarget;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -70,23 +69,6 @@ public class UserSolvedSyncStateJdbcRepository {
           AND next_page = 1
           AND last_solved_count = 0
     """, totalCount, userId);
-    }
-
-    public List<SyncTarget> findBaselineReadyTargets(long afterUserId, int limit) {
-        String sql = """
-        SELECT s.user_id, u.boj_id
-        FROM user_solved_sync_state s
-        JOIN user u ON u.user_id = s.user_id
-        WHERE s.baseline_ready = 1
-          AND s.user_id > ?
-          AND u.boj_id IS NOT NULL
-          AND TRIM(u.boj_id) <> ''
-        ORDER BY s.user_id ASC
-        LIMIT ?
-        """;
-        return jdbcTemplate.query(sql, (rs, rowNum) ->
-                        new SyncTarget(rs.getLong("user_id"), rs.getString("boj_id"))
-                , afterUserId, limit);
     }
 
     public void updateObserved(long userId, int observedSolvedCount) {
