@@ -70,7 +70,7 @@ public class BaselineFillService {
                     .toList();
 
             if (solvedProblemItems.isEmpty()) {
-                log.warn("All items filtered out. will retry. userId={}, handle={}, nextPage={}, rawItems={}",
+                log.warn("All items filtered out, advancing page. userId={}, handle={}, nextPage={}, rawItems={}",
                         userId, bojHandle, nextPage, responseItems.size());
                 stateRepo.advancePage(userId);
                 return;
