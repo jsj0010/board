@@ -20,7 +20,7 @@ public class ChallengeSyncScheduler {
     @Scheduled(cron = "0/5 1-59 0 * * *", zone = "Asia/Seoul") // 00:01:00 ~ 00:59:55
     @Scheduled(cron = "0/5 * 1-3 * * *", zone = "Asia/Seoul")   // 01:00:00 ~ 03:59:55
     public void tick() {
-        LocalDateTime windowStart = LocalDate.now(clock).atTime(0, 1, 0);
+        LocalDateTime windowStart = LocalDate.now(clock).atTime(17, 52, 0);
         service.tickOnce(windowStart);
     }
 }

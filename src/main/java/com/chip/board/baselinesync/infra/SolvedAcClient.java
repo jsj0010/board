@@ -1,5 +1,7 @@
 package com.chip.board.baselinesync.infra;
 
+import com.chip.board.baselinesync.model.SolvedAcSearchProblemResponse;
+import com.chip.board.baselinesync.model.SolvedAcUserShowResponse;
 import com.chip.board.cooldown.infra.ApiCooldownActiveException;
 import com.chip.board.cooldown.infra.ExternalApiCooldownJdbcRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +13,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -36,7 +37,31 @@ public class SolvedAcClient {
         this.cooldownRepo = cooldownRepo;
     }
 
-    public SolvedAcUserShowResponse userShow(String handle) {
+    public SolvedAcSearchProblemResponse searchSolvedProblemsSafe(String handle, int page) {
+        try {
+            return searchSolvedProblems(handle, page); // 기존 메서드(실제 호출) 재사용
+        } catch (ApiCooldownActiveException e) {
+            return null;
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    public SolvedAcUserShowResponse userShowSafe(String handle) {
+        try {
+            return userShow(handle);
+        } catch (ApiCooldownActiveException e) {
+            return null;
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    public boolean isCooldownActive() {
+        return cooldownRepo.findActiveCooldownUntil(API_KEY, COOLDOWN_MINUTES) != null;
+    }
+
+    private SolvedAcUserShowResponse userShow(String handle) {
         assertNotCooldown();
 
         try {
@@ -53,7 +78,7 @@ public class SolvedAcClient {
         }
     }
 
-    public SolvedAcSearchProblemResponse searchSolvedProblems(String handle, int page) {
+    private SolvedAcSearchProblemResponse searchSolvedProblems(String handle, int page) {
         assertNotCooldown();
 
         try {
@@ -90,11 +115,5 @@ public class SolvedAcClient {
             );
         }
         return e;
-    }
-
-    public record SolvedAcUserShowResponse(Integer solvedCount) {}
-
-    public record SolvedAcSearchProblemResponse(Integer count, List<Item> items) {
-        public record Item(Integer problemId, Integer level) {}
     }
 }
