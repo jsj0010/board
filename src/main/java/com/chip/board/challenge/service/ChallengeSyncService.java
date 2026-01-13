@@ -25,8 +25,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ChallengeSyncService {
 
-    private static final int PAGE_SIZE_ASSUMED = 100;
-
     private final ChallengeRepository challengeRepo;
     private final UserSolvedSyncStateJdbcRepository stateRepo;
     private final UserSolvedProblemJdbcRepository solvedRepo;
@@ -63,7 +61,12 @@ public class ChallengeSyncService {
                 var t = deltaOpt.get();
 
                 var resp = solvedAc.searchSolvedProblems(t.bojHandle(), t.nextPage()); // API 1회
-                var items = resp.items();
+                if (resp == null) {
+                    log.warn("solved.ac returned null body. userId={}, handle={}, nextPage={}",
+                            t.userId(), t.bojHandle(), t.nextPage());
+                    return;
+                }
+                var items = (resp.items() == null) ? List.<SolvedAcClient.SolvedAcSearchProblemResponse.Item>of() : resp.items();
 
                 tx.executeWithoutResult(st -> {
                     if (items.isEmpty()) {
@@ -91,6 +94,9 @@ public class ChallengeSyncService {
             // cooldown이면 이번 tick은 끝(다음 tick에서 재시도)
             log.warn("solved.ac cooldown active. until={}", e.until());
             return;
+        } catch (RuntimeException e) {
+            log.error("solved.ac call failed", e);
+            return; // 다음 tick 재시도
         }
 
         // 3) scoring (DB만) - scoring 구간에만
@@ -140,17 +146,6 @@ public class ChallengeSyncService {
         return challengeRepo.findFirstByStatusIn(List.of(ChallengeStatus.SCHEDULED));
     }
 
-    private static boolean inWindow(LocalDateTime now) {
-        LocalDate d = now.toLocalDate();
-        LocalDateTime start = d.atTime(0, 1, 0);
-        LocalDateTime end = d.atTime(3, 0, 0);
-        return !now.isBefore(start) && !now.isAfter(end);
-    }
-
-    private static LocalDateTime windowStart(LocalDateTime now) {
-        return now.toLocalDate().atTime(0, 1, 0);
-    }
-
     private static CreditedAtMode decideUpsertMode(Challenge c) {
         // 점수 후보로 쌓을 수 있는 구간만 NULL
         if (isScoringPhase(c)) return CreditedAtMode.SCOREABLE_NULL;
@@ -161,8 +156,6 @@ public class ChallengeSyncService {
         return (c.getStatus() == ChallengeStatus.ACTIVE && c.isPrepareFinalized())
                 || (c.getStatus() == ChallengeStatus.CLOSED && !c.isCloseFinalized());
     }
-    // ===== scoring target pick / exists =====
-    // 아래 2개는 "DB만" 수행. 구현은 프로젝트 쿼리 스타일에 맞게 옮기시면 됩니다.
 
     private Optional<Long> pickOneScoreTargetUserId() {
         return stateRepo.pickOneForScoring();

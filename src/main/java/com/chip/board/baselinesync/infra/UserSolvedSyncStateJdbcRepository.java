@@ -137,7 +137,7 @@ public class UserSolvedSyncStateJdbcRepository {
           AND s.observed_at IS NOT NULL
           AND s.observed_at >= ?
           AND s.last_solved_count < s.observed_solved_count
-        ORDER BY (s.next_page >= 1) DESC, s.user_id ASC
+        ORDER BY (s.next_page > 1) DESC, s.user_id ASC
         LIMIT 1
         FOR UPDATE SKIP LOCKED
     """;

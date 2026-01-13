@@ -20,16 +20,16 @@ public class UserSolvedProblemJdbcRepository {
         final String sql = switch (mode) {
             case SEAL_NOW -> """
                 INSERT INTO user_solved_problem (user_id, problem_id, level, credited_at)
-                VALUES (?, ?, ?, NOW(6))
+                VALUES (?, ?, ?, NOW(6)) AS new
                 ON DUPLICATE KEY UPDATE
-                    level = VALUES(level),
-                    credited_at = COALESCE(credited_at, VALUES(credited_at))
+                level = new.level,
+                credited_at = COALESCE(user_solved_problem.credited_at, new.credited_at)
             """;
             case SCOREABLE_NULL -> """
                 INSERT INTO user_solved_problem (user_id, problem_id, level, credited_at)
-                VALUES (?, ?, ?, NULL)
+                VALUES (?, ?, ?, NULL) AS new
                 ON DUPLICATE KEY UPDATE
-                    level = VALUES(level)
+                level = new.level
             """;
         };
 
