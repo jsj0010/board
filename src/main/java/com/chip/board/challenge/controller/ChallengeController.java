@@ -2,7 +2,7 @@ package com.chip.board.challenge.controller;
 
 import com.chip.board.challenge.dto.request.ChallengeCreateRequest;
 import com.chip.board.challenge.dto.response.ChallengeInfoResponse;
-import com.chip.board.challenge.servcie.ChallengeCommandService;
+import com.chip.board.challenge.service.ChallengeCommandService;
 import com.chip.board.global.base.dto.ResponseBody;
 import com.chip.board.global.base.dto.ResponseUtils;
 import jakarta.validation.Valid;

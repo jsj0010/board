@@ -1,4 +1,4 @@
-package com.chip.board.challenge.servcie;
+package com.chip.board.challenge.batch;
 
 import com.chip.board.challenge.domain.ChallengeStatus;
 import com.chip.board.challenge.repository.ChallengeRepository;
@@ -20,7 +20,7 @@ public class ChallengeStatusScheduler {
     private final ChallengeRepository challengeRepository;
     private final Clock clock;
 
-    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 00 00 * * *", zone = "Asia/Seoul")
     @Transactional
     public void updateChallengeStatus() {
         LocalDateTime now = LocalDateTime.now(clock);

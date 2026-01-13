@@ -39,6 +39,12 @@ public class Challenge extends BaseEntity {
     @Column(name = "status", nullable = false)
     private ChallengeStatus status = ChallengeStatus.SCHEDULED;
 
+    @Column(name = "prepare_finalized", nullable = false)
+    private boolean prepareFinalized = false;
+
+    @Column(name = "close_finalized", nullable = false)
+    private boolean closeFinalized = false;
+
     public Challenge(String title, LocalDateTime startDate, LocalDateTime endDate) {
         if (endDate.isBefore(startDate)) {
             throw new ServiceException(ErrorCode.CHALLENGE_RANGE_INVALID);
@@ -47,6 +53,8 @@ public class Challenge extends BaseEntity {
         this.startAt = startDate;
         this.endAt = endDate;
         this.status = ChallengeStatus.SCHEDULED;
+        this.prepareFinalized = false;
+        this.closeFinalized = false;
     }
 
     public void activate(LocalDateTime now) {
@@ -62,4 +70,26 @@ public class Challenge extends BaseEntity {
     public void close() {
         this.status = ChallengeStatus.CLOSED;
     }
+
+    /**
+     * ACTIVE 첫 동기화(prepare 구간) 종료 후 호출
+     */
+    public void finalizePrepare() {
+        if (status != ChallengeStatus.ACTIVE) {
+            throw new ServiceException(ErrorCode.CHALLENGE_STATUS_INVALID_TRANSITION);
+        }
+        this.prepareFinalized = true;
+    }
+
+    /**
+     * CLOSED 마지막 정산 동기화 종료 후 호출
+     */
+    public void finalizeClose() {
+        if (status != ChallengeStatus.CLOSED) {
+            throw new ServiceException(ErrorCode.CHALLENGE_STATUS_INVALID_TRANSITION);
+        }
+        this.closeFinalized = true;
+    }
+
+
 }

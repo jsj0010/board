@@ -1,4 +1,4 @@
-package com.chip.board.challenge.servcie;
+package com.chip.board.challenge.service;
 
 import com.chip.board.challenge.domain.Challenge;
 import com.chip.board.challenge.domain.ChallengeStatus;

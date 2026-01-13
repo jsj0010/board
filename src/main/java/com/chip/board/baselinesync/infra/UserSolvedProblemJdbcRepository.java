@@ -1,6 +1,7 @@
 package com.chip.board.baselinesync.infra;
 
 import com.chip.board.baselinesync.model.SolvedProblemItem;
+import com.chip.board.baselinesync.service.CreditedAtMode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -13,15 +14,24 @@ public class UserSolvedProblemJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public void upsertBatch(long userId, List<SolvedProblemItem> items) {
+    public void upsertBatch(long userId, List<SolvedProblemItem> items, CreditedAtMode mode) {
         if (items == null || items.isEmpty()) return;
 
-        String sql = """
-            INSERT INTO user_solved_problem (user_id, problem_id, level)
-            VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-                level = VALUES(level)
-        """;
+        final String sql = switch (mode) {
+            case SEAL_NOW -> """
+                INSERT INTO user_solved_problem (user_id, problem_id, level, credited_at)
+                VALUES (?, ?, ?, NOW(6)) AS new
+                ON DUPLICATE KEY UPDATE
+                level = new.level,
+                credited_at = COALESCE(user_solved_problem.credited_at, new.credited_at)
+            """;
+            case SCOREABLE_NULL -> """
+                INSERT INTO user_solved_problem (user_id, problem_id, level, credited_at)
+                VALUES (?, ?, ?, NULL) AS new
+                ON DUPLICATE KEY UPDATE
+                level = new.level
+            """;
+        };
 
         jdbcTemplate.batchUpdate(sql, items, 500, (ps, item) -> {
             ps.setLong(1, userId);

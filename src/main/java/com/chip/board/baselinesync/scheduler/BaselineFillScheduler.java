@@ -11,8 +11,8 @@ public class BaselineFillScheduler {
 
     private final BaselineFillService service;
 
-    // 06:00~23:59 동안 5초마다 1 tick
-    @Scheduled(cron = "*/5 * 6-23 * * *", zone = "Asia/Seoul")
+    // 06:00~22:59 동안 5초마다 1 tick
+    @Scheduled(cron = "*/5 * 6-22 * * *", zone = "Asia/Seoul")
     public void tick() {
         service.tickOnce(); // tick 1회당 API 최대 1번
     }

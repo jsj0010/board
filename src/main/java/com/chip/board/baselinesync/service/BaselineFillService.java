@@ -82,7 +82,7 @@ public class BaselineFillService {
                 return;
             }
 
-            solvedRepo.upsertBatch(t.userId(), mapped);
+            solvedRepo.upsertBatch(t.userId(), mapped, CreditedAtMode.SEAL_NOW);
             stateRepo.advancePage(t.userId());
         });
     }

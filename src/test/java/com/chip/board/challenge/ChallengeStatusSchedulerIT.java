@@ -3,7 +3,7 @@ package com.chip.board.challenge;
 import com.chip.board.challenge.domain.Challenge;
 import com.chip.board.challenge.domain.ChallengeStatus;
 import com.chip.board.challenge.repository.ChallengeRepository;
-import com.chip.board.challenge.servcie.ChallengeStatusScheduler;
+import com.chip.board.challenge.batch.ChallengeStatusScheduler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
