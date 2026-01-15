@@ -1,7 +1,7 @@
-package com.chip.board.challenge.presentaion;
+package com.chip.board.challenge.presentation;
 
-import com.chip.board.challenge.presentaion.dto.request.ChallengeCreateRequest;
-import com.chip.board.challenge.presentaion.dto.response.ChallengeInfoResponse;
+import com.chip.board.challenge.presentation.dto.request.ChallengeCreateRequest;
+import com.chip.board.challenge.presentation.dto.response.ChallengeInfoResponse;
 import com.chip.board.challenge.application.ChallengeCommandService;
 import com.chip.board.global.base.dto.ResponseBody;
 import com.chip.board.global.base.dto.ResponseUtils;

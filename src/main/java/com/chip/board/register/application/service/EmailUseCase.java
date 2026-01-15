@@ -29,8 +29,8 @@ public class EmailUseCase {
         }
 
         int code = new SecureRandom().nextInt(900000) + 100000;
-        emailSender.sendAuthCode(email, code);
         verificationCodeStore.saveAuthCode(email, code, Duration.ofMinutes(expiryMinutes));
+        emailSender.sendAuthCode(email, code);
     }
 
     public void verifyCode(VerifyEmailCommand cmd) {

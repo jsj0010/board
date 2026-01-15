@@ -1,4 +1,4 @@
-package com.chip.board.register.presentaion.dto.request;
+package com.chip.board.register.presentation.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

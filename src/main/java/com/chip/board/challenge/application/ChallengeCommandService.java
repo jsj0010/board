@@ -2,8 +2,8 @@ package com.chip.board.challenge.application;
 
 import com.chip.board.challenge.domain.Challenge;
 import com.chip.board.challenge.domain.ChallengeStatus;
-import com.chip.board.challenge.presentaion.dto.request.ChallengeCreateRequest;
-import com.chip.board.challenge.presentaion.dto.response.ChallengeInfoResponse;
+import com.chip.board.challenge.presentation.dto.request.ChallengeCreateRequest;
+import com.chip.board.challenge.presentation.dto.response.ChallengeInfoResponse;
 import com.chip.board.challenge.infrastructure.persistence.ChallengeRepository;
 import com.chip.board.global.base.exception.ErrorCode;
 import com.chip.board.global.base.exception.ServiceException;

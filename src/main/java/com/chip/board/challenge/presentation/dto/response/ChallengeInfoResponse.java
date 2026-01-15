@@ -1,4 +1,4 @@
-package com.chip.board.challenge.presentaion.dto.response;
+package com.chip.board.challenge.presentation.dto.response;
 
 import com.chip.board.challenge.domain.Challenge;
 import com.chip.board.challenge.domain.ChallengeStatus;

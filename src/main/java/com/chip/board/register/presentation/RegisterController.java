@@ -1,4 +1,4 @@
-package com.chip.board.register.presentaion;
+package com.chip.board.register.presentation;
 
 import com.chip.board.global.base.dto.ResponseBody;
 import com.chip.board.global.base.dto.ResponseUtils;
@@ -7,9 +7,9 @@ import com.chip.board.register.application.command.VerifyEmailCommand;
 import com.chip.board.register.application.service.EmailUseCase;
 import com.chip.board.register.application.service.RegisterUseCase;
 import com.chip.board.register.domain.Department;
-import com.chip.board.register.presentaion.dto.request.MailRequest;
-import com.chip.board.register.presentaion.dto.request.MailVerifyRequest;
-import com.chip.board.register.presentaion.dto.request.UserRegisterRequest;
+import com.chip.board.register.presentation.dto.request.MailRequest;
+import com.chip.board.register.presentation.dto.request.MailVerifyRequest;
+import com.chip.board.register.presentation.dto.request.UserRegisterRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,16 +36,7 @@ public class RegisterController {
 
     @PostMapping
     public ResponseEntity<ResponseBody<String>> register(@Valid @RequestBody UserRegisterRequest req) {
-        RegisterUserCommand cmd = new RegisterUserCommand(
-                req.getUsername(),
-                req.getPassword(),
-                req.getName(),
-                req.getDepartment(),
-                req.getStudentId(),
-                req.getGrade(),
-                req.getBojId(),
-                req.getPhoneNumber()
-        );
+        RegisterUserCommand cmd = RegisterUserCommand.from(req);
         registerUseCase.register(cmd);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ResponseUtils.createSuccessResponse("회원가입 성공"));
