@@ -12,6 +12,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class BaselineJobReader {
 
+    //단일 서버 운영
     public static final String KEY = "solvedac:baseline:jobs";
     private final StringRedisTemplate redis;
 

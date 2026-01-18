@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class BaselineJobWriter {
 
+    //단일 서버 운영
     private final StringRedisTemplate redis;
 
     public void scheduleNow(long userId) {

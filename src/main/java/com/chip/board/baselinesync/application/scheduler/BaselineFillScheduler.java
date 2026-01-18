@@ -14,7 +14,7 @@ import java.time.ZoneId;
 public class BaselineFillScheduler {
 
     private final BaselineFillService service;
-    private final Clock clock = Clock.system(ZoneId.of("Asia/Seoul"));
+    private final Clock clock;
 
     @Scheduled(fixedDelay = 500, initialDelay = 1000)
     public void tick() {

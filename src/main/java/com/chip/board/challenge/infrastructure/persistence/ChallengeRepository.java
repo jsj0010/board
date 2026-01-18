@@ -26,7 +26,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
     Optional<Challenge> findFirstByStatusIn(Collection<ChallengeStatus> statuses);
 
-    Optional<Challenge> findFirstByStatus(ChallengeStatus statuses);
+    Optional<Challenge> findFirstByStatus(ChallengeStatus status);
 
     boolean existsByStatus(ChallengeStatus status);
 

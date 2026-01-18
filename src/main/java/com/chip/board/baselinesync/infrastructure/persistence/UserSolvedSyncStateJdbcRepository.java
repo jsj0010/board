@@ -48,6 +48,8 @@ public class UserSolvedSyncStateJdbcRepository {
             JOIN `user` u ON u.user_id = s.user_id
             WHERE s.user_id = ?
               AND s.baseline_ready = 0
+              AND u.boj_id IS NOT NULL
+              AND TRIM(u.boj_id) <> ''
             LIMIT 1
             """;
 

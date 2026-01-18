@@ -44,7 +44,7 @@ public class ChallengeSyncService {
     private final ChallengeDeltaJobWriter deltaWriter;
 
     public void tickOnce(LocalDateTime windowStart) {
-        if (solvedAc.isCooldownActive()) return;
+        boolean cooldownActive = solvedAc.isCooldownActive();
 
         Optional<Challenge> challengeOpt = pickChallenge();
         if (challengeOpt.isEmpty()) return;
@@ -57,86 +57,87 @@ public class ChallengeSyncService {
 
         long now = System.currentTimeMillis();
 
-        // 1) observe (API 1회)
-        Optional<Long> observeUserIdOpt = observeReader.popDueUserId(now);
-        if (observeUserIdOpt.isPresent()) {
-            long userId = observeUserIdOpt.get();
+        if (!cooldownActive) {
+            // 1) observe (API 1회)
+            Optional<Long> observeUserIdOpt = observeReader.popDueUserId(now);
+            if (observeUserIdOpt.isPresent()) {
+                long userId = observeUserIdOpt.get();
 
-            Optional<SyncTarget> tOpt = tx.execute(status -> stateRepo.findObserveTarget(userId, windowStart));
-            if (tOpt == null || tOpt.isEmpty()) return;
+                Optional<SyncTarget> tOpt = tx.execute(status -> stateRepo.findObserveTarget(userId, windowStart));
+                if (tOpt == null || tOpt.isEmpty()) return;
 
-            SyncTarget t = tOpt.get();
+                SyncTarget t = tOpt.get();
 
-            SolvedAcUserShowResponse userShow = solvedAc.userShowSafe(t.bojHandle());
-            if (userShow == null || userShow.solvedCount() == null) {
-                observeWriter.scheduleAt(userId, solvedAc.nextAllowedAtMs());
-                return;
+                SolvedAcUserShowResponse userShow = solvedAc.userShowSafe(t.bojHandle());
+                if (userShow == null || userShow.solvedCount() == null) {
+                    observeWriter.scheduleAt(userId, solvedAc.nextAllowedAtMs());
+                    return;
+                }
+
+                Integer solvedCount = userShow.solvedCount();
+
+                // observed 반영 → delta pending 판단(기존 DB 로직 유지)
+                tx.executeWithoutResult(status -> stateRepo.updateObserved(userId, solvedCount));
+
+                // delta가 필요한 상태면 delta 큐에 올림(필요 메서드: findDeltaTarget)
+                Optional<DeltaPageTarget> deltaOpt =
+                        tx.execute(status -> stateRepo.findDeltaTarget(userId, windowStart));
+                if (deltaOpt != null && deltaOpt.isPresent()) {
+                    deltaWriter.scheduleAt(userId, solvedAc.nextAllowedAtMs());
+                }
+                return; // tick당 API 1회
             }
 
-            Integer solvedCount = userShow.solvedCount();
+            // 2) delta page sync (API 1회)
+            Optional<Long> deltaUserIdOpt = deltaReader.popDueUserId(now);
+            if (deltaUserIdOpt.isPresent()) {
+                long userId = deltaUserIdOpt.get();
 
-            // observed 반영 → delta pending 판단(기존 DB 로직 유지)
-            tx.executeWithoutResult(status -> stateRepo.updateObserved(userId, solvedCount));
+                Optional<DeltaPageTarget> deltaOpt =
+                        tx.execute(status -> stateRepo.findDeltaTarget(userId, windowStart));
+                if (deltaOpt == null || deltaOpt.isEmpty()) return;
 
-            // delta가 필요한 상태면 delta 큐에 올림(필요 메서드: findDeltaTarget)
-            Optional<DeltaPageTarget> deltaOpt =
-                    tx.execute(status -> stateRepo.findDeltaTarget(userId, windowStart));
-            if (deltaOpt != null && deltaOpt.isPresent()) {
-                deltaWriter.scheduleAt(userId, solvedAc.nextAllowedAtMs());
+                DeltaPageTarget delta = deltaOpt.get();
+
+                SolvedAcSearchProblemResponse resp =
+                        solvedAc.searchSolvedProblemsSafe(delta.bojHandle(), delta.nextPage());
+                if (resp == null) {
+                    deltaWriter.scheduleAt(userId, solvedAc.nextAllowedAtMs());
+                    return;
+                }
+
+                List<SolvedAcSearchProblemResponse.Item> items =
+                        (resp.items() == null) ? List.of() : resp.items();
+
+                boolean needMore = Boolean.TRUE.equals(
+                        tx.execute(status -> {
+                            if (items.isEmpty()) {
+                                stateRepo.finishDelta(delta.userId(), delta.observedSolvedCount());
+                                return false;
+                            }
+
+                            List<SolvedProblemItem> solvedItems = items.stream()
+                                    .filter(it -> it.problemId() != null)
+                                    .filter(it -> it.level() != null)
+                                    .map(it -> new SolvedProblemItem(it.problemId(), it.level()))
+                                    .toList();
+
+                            if (!solvedItems.isEmpty()) {
+                                solvedRepo.upsertBatch(delta.userId(), solvedItems, upsertMode);
+                            }
+
+                            stateRepo.advancePage(delta.userId());
+                            return true;
+                        })
+                );
+
+
+                if (needMore) {
+                    deltaWriter.scheduleAt(userId, solvedAc.nextAllowedAtMs());
+                }
+                return; // tick당 API 1회
             }
-            return; // tick당 API 1회
         }
-
-        // 2) delta page sync (API 1회)
-        Optional<Long> deltaUserIdOpt = deltaReader.popDueUserId(now);
-        if (deltaUserIdOpt.isPresent()) {
-            long userId = deltaUserIdOpt.get();
-
-            Optional<DeltaPageTarget> deltaOpt =
-                    tx.execute(status -> stateRepo.findDeltaTarget(userId, windowStart));
-            if (deltaOpt == null || deltaOpt.isEmpty()) return;
-
-            DeltaPageTarget delta = deltaOpt.get();
-
-            SolvedAcSearchProblemResponse resp =
-                    solvedAc.searchSolvedProblemsSafe(delta.bojHandle(), delta.nextPage());
-            if (resp == null) {
-                deltaWriter.scheduleAt(userId, solvedAc.nextAllowedAtMs());
-                return;
-            }
-
-            List<SolvedAcSearchProblemResponse.Item> items =
-                    (resp.items() == null) ? List.of() : resp.items();
-
-            boolean needMore = Boolean.TRUE.equals(
-                    tx.execute(status -> {
-                        if (items.isEmpty()) {
-                            stateRepo.finishDelta(delta.userId(), delta.observedSolvedCount());
-                            return false;
-                        }
-
-                        List<SolvedProblemItem> solvedItems = items.stream()
-                                .filter(it -> it.problemId() != null)
-                                .filter(it -> it.level() != null)
-                                .map(it -> new SolvedProblemItem(it.problemId(), it.level()))
-                                .toList();
-
-                        if (!solvedItems.isEmpty()) {
-                            solvedRepo.upsertBatch(delta.userId(), solvedItems, upsertMode);
-                        }
-
-                        stateRepo.advancePage(delta.userId());
-                        return true;
-                    })
-            );
-
-
-            if (needMore) {
-                deltaWriter.scheduleAt(userId, solvedAc.nextAllowedAtMs());
-            }
-            return; // tick당 API 1회
-        }
-
         // 3) scoring (DB만) - 기존 유지
         if (isScoringPhase) {
             Boolean didScore = tx.execute(status -> {

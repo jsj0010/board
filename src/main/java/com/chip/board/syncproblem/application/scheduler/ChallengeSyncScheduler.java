@@ -17,7 +17,7 @@ public class ChallengeSyncScheduler {
     private final ChallengeSyncService challengeSyncService;
     private final Clock clock;
 
-    // 00:01 ~ 03:59 동안만 돌리고, 그 외 시간엔 즉시 return
+    // 00:01 ~ 02:59 동안만 돌리고, 그 외 시간엔 즉시 return
     @Scheduled(fixedDelay = 5000, initialDelay = 1000)
     public void tick() {
         LocalTime now = LocalTime.now(clock);
