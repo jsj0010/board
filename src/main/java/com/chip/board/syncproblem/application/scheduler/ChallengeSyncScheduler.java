@@ -22,8 +22,10 @@ public class ChallengeSyncScheduler {
     public void tick() {
         LocalTime now = LocalTime.now(clock);
 
+        final LocalTime syncStart = LocalTime.of(0, 1);
+        final LocalTime syncEnd = LocalTime.of(3, 0);
         // 00:01 <= now < 03:00
-        if (now.isBefore(LocalTime.of(0, 1)) || !now.isBefore(LocalTime.of(3, 0))) {
+        if (now.isBefore(syncStart) || !now.isBefore(syncEnd)) {
             return;
         }
 
