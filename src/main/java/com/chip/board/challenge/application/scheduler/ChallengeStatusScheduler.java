@@ -1,6 +1,6 @@
 package com.chip.board.challenge.application.scheduler;
 
-import com.chip.board.challenge.application.ChallengeStatusService;
+import com.chip.board.challenge.application.service.ChallengeStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,7 +13,7 @@ public class ChallengeStatusScheduler {
 
     private final ChallengeStatusService challengeStatusService;
 
-    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 33 20 * * *", zone = "Asia/Seoul")
     public void updateChallengeStatus() {
         challengeStatusService.updateChallengeStatus();
     }

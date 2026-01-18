@@ -19,7 +19,16 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     """)
     boolean existsOverlappingRange(@Param("startAt") LocalDateTime startAt,
                                    @Param("endAt") LocalDateTime endAt);
+
     boolean existsByStatusIn(Collection<ChallengeStatus> statuses);
 
+    Optional<Challenge> findTopByStatusAndCloseFinalizedFalseOrderByEndAtDesc(ChallengeStatus status);
+
     Optional<Challenge> findFirstByStatusIn(Collection<ChallengeStatus> statuses);
+
+    Optional<Challenge> findFirstByStatus(ChallengeStatus status);
+
+    boolean existsByStatus(ChallengeStatus status);
+
+    boolean existsByStatusAndCloseFinalized(ChallengeStatus status, boolean closeFinalized);
 }

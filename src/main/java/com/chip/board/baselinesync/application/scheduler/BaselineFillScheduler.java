@@ -1,19 +1,29 @@
 package com.chip.board.baselinesync.application.scheduler;
 
-import com.chip.board.baselinesync.application.BaselineFillService;
+import com.chip.board.baselinesync.application.service.BaselineFillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.time.Clock;
+import java.time.LocalTime;
 
 @Component
 @RequiredArgsConstructor
 public class BaselineFillScheduler {
 
     private final BaselineFillService service;
+    private final Clock clock;
 
-    // 06:00~22:59 동안 5초마다 1 tick
-    @Scheduled(cron = "*/5 * 6-22 * * *", zone = "Asia/Seoul")
+    @Scheduled(fixedDelay = 500, initialDelay = 1000)
     public void tick() {
-        service.tickOnce(); // tick 1회당 API 최대 1번
+        LocalTime now = LocalTime.now(clock);
+
+        // 06:00 <= now < 23:00
+        if (now.isBefore(LocalTime.of(6, 0)) || !now.isBefore(LocalTime.of(23, 0))) {
+            return;
+        }
+
+        service.tickOnce();
     }
 }

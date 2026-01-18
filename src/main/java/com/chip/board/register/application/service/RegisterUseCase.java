@@ -1,5 +1,6 @@
 package com.chip.board.register.application.service;
 
+import com.chip.board.baselinesync.application.port.BaselineEnqueuePort;
 import com.chip.board.global.base.exception.ErrorCode;
 import com.chip.board.global.base.exception.ServiceException;
 import com.chip.board.register.application.command.RegisterUserCommand;
@@ -23,6 +24,7 @@ public class RegisterUseCase {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserSolvedSyncPort userSolvedSyncPort;
+    private final BaselineEnqueuePort baselineEnqueuePort;
 
     @Transactional
     public void register(RegisterUserCommand cmd) {
@@ -46,6 +48,12 @@ public class RegisterUseCase {
 
         userRepository.save(user);
         userSolvedSyncPort.createInitialSyncState(user);
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                baselineEnqueuePort.enqueueBaseline(user.getId());
+            }
+        });
 
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override public void afterCommit() {
