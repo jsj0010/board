@@ -20,8 +20,8 @@ public class ChallengeObserveEnqueueScheduler {
     private final ChallengeObserveEnqueueService challengeObserveEnqueueService;
     private final Clock clock;
 
-    // 매일 00:01:00에 1번
-    @Scheduled(cron = "0 1 0 * * *", zone = "Asia/Seoul")
+    // 매일 00:00:00에 1번
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     public void enqueue() {
 
         boolean shouldRun =
@@ -30,7 +30,7 @@ public class ChallengeObserveEnqueueScheduler {
 
         if (!shouldRun) return;
 
-        LocalDateTime windowStart = LocalDate.now(clock).atTime(0, 1, 0);
+        LocalDateTime windowStart = LocalDate.now(clock).atTime(0, 0, 0);
         challengeObserveEnqueueService.enqueueObserveWindow(windowStart);
     }
 }

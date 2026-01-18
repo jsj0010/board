@@ -10,6 +10,7 @@ import org.springframework.web.client.RestClient;
 import java.net.http.HttpClient;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.ZoneId;
 
 @Configuration
 public class SolvedacConfig {
@@ -19,7 +20,7 @@ public class SolvedacConfig {
     }
     @Bean
     public Clock clock() {
-        return Clock.systemDefaultZone();
+        return Clock.system(ZoneId.of("Asia/Seoul"));
     }
     @Bean
     public RestClient.Builder solvedAcRestClientBuilder() {

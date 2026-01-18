@@ -13,7 +13,7 @@ public class ChallengeStatusScheduler {
 
     private final ChallengeStatusService challengeStatusService;
 
-    @Scheduled(cron = "0 33 20 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     public void updateChallengeStatus() {
         challengeStatusService.updateChallengeStatus();
     }
