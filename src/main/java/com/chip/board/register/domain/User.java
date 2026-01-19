@@ -54,9 +54,6 @@ public class User {
     @Column(name = "boj_id", nullable = false, length = 64)
     private String bojId;
 
-    @Column(name = "phone_number", nullable = false, length = 20)
-    private String phoneNumber;
-
     @Column(name = "is_deleted")
     private boolean deleted = false;
 
@@ -76,9 +73,7 @@ public class User {
             String studentId,
             int grade,
             Role role,
-            String bojId,
-            String phoneNumber
-
+            String bojId
     ) {
         this.username = username;
         this.password = password;
@@ -88,7 +83,6 @@ public class User {
         this.grade = grade;
         this.role = role;
         this.bojId = bojId;
-        this.phoneNumber = phoneNumber;
     }
 
     public void issuePassword(String password) {

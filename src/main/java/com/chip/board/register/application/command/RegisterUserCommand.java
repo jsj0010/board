@@ -11,8 +11,7 @@ public record RegisterUserCommand(
         String department,
         String studentId,
         Integer grade,
-        String bojId,
-        String phoneNumber
+        String bojId
 ) {
     public static RegisterUserCommand from(UserRegisterRequest req) {
         Objects.requireNonNull(req, "req must not be null");
@@ -23,8 +22,7 @@ public record RegisterUserCommand(
                 req.getDepartment(),
                 req.getStudentId(),
                 req.getGrade(),
-                req.getBojId(),
-                req.getPhoneNumber()
+                req.getBojId()
         );
     }
 }

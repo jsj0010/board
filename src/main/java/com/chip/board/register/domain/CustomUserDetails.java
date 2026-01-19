@@ -63,6 +63,4 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public String getBojId() { return user.getBojId();}
-
-    public String getPhoneNumber() { return user.getPhoneNumber();}
 }

@@ -43,7 +43,6 @@ public class RegisterUseCase {
                 .grade(cmd.grade())
                 .role(Role.USER)
                 .bojId(cmd.bojId())
-                .phoneNumber(cmd.phoneNumber())
                 .build();
 
         userRepository.save(user);
