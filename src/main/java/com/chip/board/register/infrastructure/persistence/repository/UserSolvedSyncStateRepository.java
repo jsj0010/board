@@ -1,4 +1,4 @@
-package com.chip.board.register.infrastructure.solved;
+package com.chip.board.register.infrastructure.persistence.repository;
 
 import com.chip.board.register.domain.UserSolvedSyncState;
 import org.springframework.data.jpa.repository.JpaRepository;

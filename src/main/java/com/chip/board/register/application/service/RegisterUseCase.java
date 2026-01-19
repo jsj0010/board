@@ -4,7 +4,7 @@ import com.chip.board.baselinesync.application.port.baselineJob.BaselineEnqueueP
 import com.chip.board.global.base.exception.ErrorCode;
 import com.chip.board.global.base.exception.ServiceException;
 import com.chip.board.register.application.command.RegisterUserCommand;
-import com.chip.board.register.application.port.UserRepository;
+import com.chip.board.register.infrastructure.persistence.repository.UserRepository;
 import com.chip.board.register.application.port.UserSolvedSyncPort;
 import com.chip.board.register.application.port.VerificationCodeStore;
 import com.chip.board.register.domain.Department;

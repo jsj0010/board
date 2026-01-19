@@ -3,7 +3,7 @@ package com.chip.board.register.application.service;
 import com.chip.board.global.base.exception.ErrorCode;
 import com.chip.board.global.base.exception.ServiceException;
 import com.chip.board.register.application.command.VerifyEmailCommand;
-import com.chip.board.register.application.port.UserRepository;
+import com.chip.board.register.infrastructure.persistence.repository.UserRepository;
 import com.chip.board.register.application.port.EmailSender;
 import com.chip.board.register.application.port.VerificationCodeStore;
 import lombok.RequiredArgsConstructor;

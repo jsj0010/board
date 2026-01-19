@@ -3,7 +3,7 @@ package com.chip.board.register.application.component.reader;
 import com.chip.board.global.base.exception.ErrorCode;
 import com.chip.board.global.base.exception.ServiceException;
 import com.chip.board.register.domain.User;
-import com.chip.board.register.application.port.UserRepository;
+import com.chip.board.register.infrastructure.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

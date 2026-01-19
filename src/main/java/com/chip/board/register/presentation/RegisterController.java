@@ -4,12 +4,15 @@ import com.chip.board.global.base.dto.ResponseBody;
 import com.chip.board.global.base.dto.ResponseUtils;
 import com.chip.board.register.application.command.RegisterUserCommand;
 import com.chip.board.register.application.command.VerifyEmailCommand;
+import com.chip.board.register.application.service.BaekjoonHandleValidationService;
 import com.chip.board.register.application.service.EmailUseCase;
 import com.chip.board.register.application.service.RegisterUseCase;
 import com.chip.board.register.domain.Department;
 import com.chip.board.register.presentation.dto.request.MailRequest;
 import com.chip.board.register.presentation.dto.request.MailVerifyRequest;
 import com.chip.board.register.presentation.dto.request.UserRegisterRequest;
+import com.chip.board.register.presentation.dto.request.ValidateBaekjoonHandleRequest;
+import com.chip.board.register.presentation.dto.response.ValidateBaekjoonHandleResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +29,7 @@ import java.util.List;
 public class RegisterController {
     private final RegisterUseCase registerUseCase;
     private final EmailUseCase emailUseCase;
+    private final BaekjoonHandleValidationService baekjoonHandleValidationService;
 
     @GetMapping
     public ResponseEntity<ResponseBody<List<String>>> showRegisterForm(){
@@ -53,5 +57,14 @@ public class RegisterController {
         VerifyEmailCommand cmd = new VerifyEmailCommand(req.getUsername(), req.getMailCode());
         emailUseCase.verifyCode(cmd);
         return ResponseEntity.ok(ResponseUtils.createSuccessResponse("인증이 완료되었습니다."));
+    }
+
+    @PostMapping("/baekjoon/validate")
+    public ResponseEntity<ResponseBody<ValidateBaekjoonHandleResponse>> validate(
+            @RequestBody @Valid ValidateBaekjoonHandleRequest req
+    ) {
+        boolean valid = baekjoonHandleValidationService.validate(req.handle());
+        ValidateBaekjoonHandleResponse response = new ValidateBaekjoonHandleResponse(valid);
+        return ResponseEntity.ok(ResponseUtils.createSuccessResponse(response));
     }
 }

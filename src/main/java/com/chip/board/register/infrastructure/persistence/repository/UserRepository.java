@@ -1,4 +1,4 @@
-package com.chip.board.register.application.port;
+package com.chip.board.register.infrastructure.persistence.repository;
 
 import java.util.Optional;
 
@@ -11,4 +11,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
     Optional<User> findById(Long id);
+    boolean existsByBojId(String bojId);
 }
