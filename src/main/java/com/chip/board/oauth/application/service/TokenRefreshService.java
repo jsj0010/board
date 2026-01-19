@@ -11,7 +11,7 @@ import com.chip.board.oauth.application.component.reader.RefreshTokenFinder;
 import com.chip.board.oauth.application.component.writer.RefreshTokenWriter;
 import com.chip.board.global.jwt.dto.response.TokenPair;
 import com.chip.board.register.domain.User;
-import com.chip.board.register.application.port.UserRepository;
+import com.chip.board.register.infrastructure.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

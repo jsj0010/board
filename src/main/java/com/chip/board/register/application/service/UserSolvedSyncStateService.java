@@ -1,10 +1,11 @@
-package com.chip.board.register.infrastructure.solved;
+package com.chip.board.register.application.service;
 
 import com.chip.board.global.base.exception.ErrorCode;
 import com.chip.board.global.base.exception.ServiceException;
 import com.chip.board.register.application.port.UserSolvedSyncPort;
 import com.chip.board.register.domain.User;
 import com.chip.board.register.domain.UserSolvedSyncState;
+import com.chip.board.register.infrastructure.persistence.repository.UserSolvedSyncStateRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
