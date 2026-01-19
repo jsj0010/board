@@ -19,7 +19,7 @@ public class BaekjoonHandleValidationService {
     public boolean validate(String handle) {
         boolean alreadyUsed = userRepositoryPort.existsByBojId(handle);
         if (alreadyUsed) {
-            throw new ServiceException(ErrorCode.BAEKJOON_HANDLE_ALREADY_USED);
+            throw new ServiceException(ErrorCode.DUPLICATE_BOJ_ID);
         }
 
         boolean cooldownActive = solvedAcPort.isCooldownActive();
