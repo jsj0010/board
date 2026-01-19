@@ -5,6 +5,7 @@ import com.chip.board.challenge.application.port.ChallengeSavePort;
 import com.chip.board.challenge.domain.Challenge;
 import com.chip.board.challenge.domain.ChallengeStatus;
 import com.chip.board.challenge.infrastructure.persistence.repository.ChallengeRepository;
+import com.chip.board.syncproblem.application.port.dto.ChallengeSyncSnapshot;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +32,6 @@ public class ChallengePersistenceAdapter implements ChallengeLoadPort, Challenge
         Optional<Challenge> active = findActive();
         if (active.isPresent()) return active;
         return challengeRepository.findTopByStatusOrderByStartAtAsc(ChallengeStatus.SCHEDULED);
-    }
-
-    @Override
-    public Optional<Challenge> findLatestUnfinalizedClosed() {
-        return challengeRepository.findTopByStatusAndCloseFinalizedFalseOrderByEndAtDesc(ChallengeStatus.CLOSED);
     }
 
     @Override
@@ -73,5 +69,17 @@ public class ChallengePersistenceAdapter implements ChallengeLoadPort, Challenge
     @Override
     public boolean existsClosedUnfinalized() {
         return challengeRepository.existsByStatusAndCloseFinalized(ChallengeStatus.CLOSED, false);
+    }
+
+    @Override
+    public Optional<ChallengeSyncSnapshot> findCurrentSyncTarget() {
+        return challengeRepository.findFirstByStatus(ChallengeStatus.ACTIVE)
+                .or(() -> challengeRepository.findTopByStatusAndCloseFinalizedFalseOrderByEndAtDesc(ChallengeStatus.CLOSED))
+                .map(c -> new ChallengeSyncSnapshot(
+                        c.getChallengeId(),
+                        c.getStatus(),
+                        c.isPrepareFinalized(),
+                        c.isCloseFinalized()
+                ));
     }
 }
