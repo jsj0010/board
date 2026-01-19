@@ -34,9 +34,4 @@ public class UserRegisterRequest {
 
     @NotBlank
     private String bojId;
-
-    @NotBlank
-    @Pattern(message = "전화번호 형식이 올바르지 않습니다.",
-            regexp = "^\\d{3}-\\d{4}-\\d{4}$")
-    private String phoneNumber;
 }
