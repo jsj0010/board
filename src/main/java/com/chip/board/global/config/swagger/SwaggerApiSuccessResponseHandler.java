@@ -2,9 +2,11 @@ package com.chip.board.global.config.swagger;
 
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
@@ -18,62 +20,54 @@ import org.springframework.web.method.HandlerMethod;
 @RequiredArgsConstructor
 @Profile("!test && !prod")
 public class SwaggerApiSuccessResponseHandler {
-    public void handle(Operation operation, HandlerMethod handlerMethod) {
-        // 스프링 빈 컨트롤러 메서드에 적용된 SwaggerApiResponses 애너테이션을 불러옴
-        SwaggerApiResponses apiResponses = handlerMethod.getMethodAnnotation(SwaggerApiResponses.class);
-        if (apiResponses == null) {
-            return;
-        }
 
-        // 내부의 SwaggerApiSuccessResponse 애너테이션을 불러옴
+    public void handle(Operation operation, HandlerMethod handlerMethod) {
+        // ✅ 인터페이스에 붙은 @SwaggerApiResponses 까지 찾기
+        SwaggerApiResponses apiResponses = SwaggerAnnotationSupport.findSwaggerApiResponses(handlerMethod);
+        if (apiResponses == null) return;
+
         SwaggerApiSuccessResponse apiSuccessResponse = apiResponses.success();
-        if (apiSuccessResponse == null) {
-            return;
-        }
+        if (apiSuccessResponse == null) return;
 
         ApiResponses responses = operation.getResponses();
 
-        // 기본 응답 및 200 HTTP 응답 상태 코드 삭제
         String responseCode = String.valueOf(apiSuccessResponse.status().value());
         responses.remove("default");
         responses.remove("200");
         responses.remove(responseCode);
 
-        // 공통 응답 스키마 구성
         Schema<?> dataSchema = resolveDataSchema(apiSuccessResponse);
+
+        // 실제 성공 응답 포맷: { "success": "true", "data": ... }
         Schema<?> responseSchema = new Schema<>()
                 .addProperty("success", new Schema<>().type("string").example("true"))
                 .addProperty("data", dataSchema);
 
-        // 응답 객체 생성 및 등록
         ApiResponse apiResponse = new ApiResponse()
                 .description(apiSuccessResponse.description())
-                .content(new Content()
-                        .addMediaType("application/json", new MediaType().schema(responseSchema))
-                );
+                .content(new Content().addMediaType("application/json", new MediaType().schema(responseSchema)));
 
         responses.addApiResponse(responseCode, apiResponse);
     }
 
     private Schema<?> resolveDataSchema(SwaggerApiSuccessResponse apiSuccessResponse) {
-        // SwaggerApiSuccessResponse의 responsePage 속성이 등록되었으면 GlobalPageResponse와 함께 응답을 출력하도록 스키마 구성
         if (apiSuccessResponse.responsePage() != Void.class) {
             return buildPageSchema(apiSuccessResponse.responsePage());
         }
 
-        // SwaggerApiSuccessResponse의 response 속성이 등록되었으면 해당 객체의 응답을 출력하도록 스키마 구성
         if (apiSuccessResponse.response() != Void.class) {
             Class<?> responseClass = apiSuccessResponse.response();
 
-            // 배열로 속성 값이 등록되었으면 리스트 형식으로 응답을 출력하도록 스키마 구성
+            // ✅ 배열 응답: String[].class 등
             if (responseClass.isArray()) {
-                return new ArraySchema().items(refSchema(responseClass.getComponentType()));
+                Class<?> itemType = responseClass.getComponentType();
+                return new ArraySchema().items(schemaOf(itemType));
             }
 
-            return refSchema(responseClass);
+            // ✅ 단일 응답: String.class / DTO.class 등
+            return schemaOf(responseClass);
         }
 
-        // 속성이 등록되지 않았거나 Void.class라면 null을 출력하도록 스키마 구성
         return new Schema<>().nullable(true).example(null);
     }
 
@@ -85,7 +79,36 @@ public class SwaggerApiSuccessResponseHandler {
                 .addProperty("totalElements", new IntegerSchema().example(100).description("전체 항목 수"))
                 .addProperty("totalPages", new IntegerSchema().example(9).description("전체 페이지 수"))
                 .addProperty("pageSort", new StringSchema().example("companyName: ASC").description("정렬 정보"))
-                .addProperty("pageContents", new ArraySchema().description("페이지 내 컨텐츠 목록").items(refSchema(responseClass).description("요소는 호출 API에 따라 달라집니다 (예: CompanyResponseDto)")));
+                .addProperty("pageContents",
+                        new ArraySchema()
+                                .description("페이지 내 컨텐츠 목록")
+                                .items(schemaOf(responseClass).description("요소는 호출 API에 따라 달라집니다")));
+    }
+
+    /**
+     * ✅ java.lang.String 같은 기본 타입은 $ref 로 만들면 components/schemas에 없어서 깨집니다.
+     * 그래서 기본 타입은 명시 Schema를 만들고,
+     * DTO만 $ref 로 연결합니다.
+     */
+    private Schema<?> schemaOf(Class<?> type) {
+        Schema<?> primitive = primitiveSchema(type);
+        if (primitive != null) return primitive;
+        return refSchema(type);
+    }
+
+    private Schema<?> primitiveSchema(Class<?> type) {
+        if (type == String.class) return new StringSchema();
+
+        if (type == boolean.class || type == Boolean.class) return new BooleanSchema();
+
+        if (type == int.class || type == Integer.class) return new IntegerSchema().format("int32");
+        if (type == long.class || type == Long.class) return new IntegerSchema().format("int64");
+
+        if (type == float.class || type == Float.class) return new NumberSchema().format("float");
+        if (type == double.class || type == Double.class) return new NumberSchema().format("double");
+
+        // 필요하면 BigDecimal, LocalDateTime 등 추가 가능
+        return null;
     }
 
     private Schema<?> refSchema(Class<?> responseClass) {
