@@ -24,7 +24,7 @@ public interface RegisterSwagger {
                     description = "학과 목록 조회 성공"
             )
     )
-    ResponseEntity<ResponseBody<java.util.List<String>>> showRegisterForm();
+    ResponseEntity<ResponseBody<List<String>>> showRegisterForm();
 
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(

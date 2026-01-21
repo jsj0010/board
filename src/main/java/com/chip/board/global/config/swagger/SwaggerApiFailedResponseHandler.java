@@ -72,8 +72,8 @@ public class SwaggerApiFailedResponseHandler {
             MediaType mediaType = new MediaType();
             ApiResponse apiResponse = new ApiResponse();
 
-            exampleHolders.forEach(h ->
-                    mediaType.addExamples(h.getExceptionName(), h.getHolder())
+            exampleHolders.forEach(exampleHolder ->
+                    mediaType.addExamples(exampleHolder.getExceptionName(), exampleHolder.getHolder())
             );
 
             content.addMediaType("application/json", mediaType);
