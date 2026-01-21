@@ -13,6 +13,7 @@ import com.chip.board.register.presentation.dto.request.MailVerifyRequest;
 import com.chip.board.register.presentation.dto.request.UserRegisterRequest;
 import com.chip.board.register.presentation.dto.request.ValidateBaekjoonHandleRequest;
 import com.chip.board.register.presentation.dto.response.ValidateBaekjoonHandleResponse;
+import com.chip.board.register.presentation.swagger.RegisterSwagger;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/register")
-public class RegisterController {
+public class RegisterController implements RegisterSwagger {
     private final RegisterUseCase registerUseCase;
     private final EmailUseCase emailUseCase;
     private final BaekjoonHandleValidationService baekjoonHandleValidationService;

@@ -22,28 +22,28 @@ import java.util.stream.Collectors;
 @Component
 @Profile("!test && !prod")
 public class SwaggerApiFailedResponseHandler {
+
     public void handle(Operation operation, HandlerMethod handlerMethod) {
-        // 스프링 빈 컨트롤러 메서드에 적용된 SwaggerApiResponses 애너테이션을 불러옴
-        SwaggerApiResponses apiResponses = handlerMethod.getMethodAnnotation(SwaggerApiResponses.class);
-        if (apiResponses == null) {
-            return;
-        }
+        // ✅ 인터페이스에 붙은 @SwaggerApiResponses 까지 찾기
+        SwaggerApiResponses apiResponses = SwaggerAnnotationSupport.findSwaggerApiResponses(handlerMethod);
+        if (apiResponses == null) return;
 
         ApiResponses responses = operation.getResponses();
 
         List<SwaggerApiFailedResponse> apiFailedResponses = Arrays.asList(apiResponses.errors());
 
-        // SwaggerApiFailedResponse를 ExampleHolder 객체로 만들어 HTTP 응답 상태 코드별로 저장
-        Map<Integer, List<ExampleHolder>> exampleHoldersGroupedByResponseCode = apiFailedResponses.stream()
+        Map<Integer, List<ExampleHolder>> grouped = apiFailedResponses.stream()
                 .map(this::createExampleHolder)
                 .collect(Collectors.groupingBy(ExampleHolder::getResponseCode));
 
-        addExamplesToResponses(responses, exampleHoldersGroupedByResponseCode);
+        addExamplesToResponses(responses, grouped);
     }
 
     private ExampleHolder createExampleHolder(SwaggerApiFailedResponse apiFailedResponse) {
         ErrorCode exceptionType = apiFailedResponse.value();
-        String description = apiFailedResponse.description().isBlank() ? exceptionType.getMessage() : apiFailedResponse.description();
+        String description = apiFailedResponse.description().isBlank()
+                ? exceptionType.getMessage()
+                : apiFailedResponse.description();
 
         return ExampleHolder.builder()
                 .responseCode(exceptionType.getStatus().value())
@@ -55,33 +55,27 @@ public class SwaggerApiFailedResponseHandler {
     }
 
     private Example createSwaggerExample(ErrorCode exceptionType, String description) {
-        // 공통 응답 스키마 구성
-        FailedResponseBody failedResponseBody = new FailedResponseBody(exceptionType.getCode(), exceptionType.getMessage());
-        ExampleFailedResponseBody failedResponseBodyExample = new ExampleFailedResponseBody("false", failedResponseBody);
+        FailedResponseBody failed = new FailedResponseBody(exceptionType.getCode(), exceptionType.getMessage());
+
+        // 실제 실패 응답 포맷(현재 DTO 기준): { "success":"false", "code":"..", "msg":".." }
+        ExampleFailedResponseBody exampleBody = new ExampleFailedResponseBody("false", failed);
 
         Example example = new Example();
-        example.setValue(failedResponseBodyExample);
+        example.setValue(exampleBody);
         example.setDescription(description);
-
         return example;
     }
 
-    private void addExamplesToResponses(
-            ApiResponses responses,
-            Map<Integer, List<ExampleHolder>> exampleHoldersGroupedByResponseCode
-    ) {
-        // 각 HTTP 응답 상태 코드별로 탐색
-        exampleHoldersGroupedByResponseCode.forEach((status, exampleHolders) -> {
+    private void addExamplesToResponses(ApiResponses responses, Map<Integer, List<ExampleHolder>> grouped) {
+        grouped.forEach((status, exampleHolders) -> {
             Content content = new Content();
             MediaType mediaType = new MediaType();
             ApiResponse apiResponse = new ApiResponse();
 
-            // 각 상태 코드별 예제 생성
-            exampleHolders.forEach(
-                    exampleHolder -> mediaType.addExamples(exampleHolder.getExceptionName(), exampleHolder.getHolder())
+            exampleHolders.forEach(exampleHolder ->
+                    mediaType.addExamples(exampleHolder.getExceptionName(), exampleHolder.getHolder())
             );
 
-            // 응답 객체 등록
             content.addMediaType("application/json", mediaType);
             apiResponse.setContent(content);
 
@@ -101,15 +95,14 @@ public class SwaggerApiFailedResponseHandler {
 
     @Getter
     public static class ExampleFailedResponseBody {
-        private  final String success;
-        private  final String code;
-        private  final String message;
+        private final String success;
+        private final String code;
+        private final String msg;
 
-        public ExampleFailedResponseBody(String success , FailedResponseBody failedResponseBody) {
+        public ExampleFailedResponseBody(String success, FailedResponseBody failed) {
             this.success = success;
-            this.code = failedResponseBody.getCode();
-            this.message = failedResponseBody.getMsg();
+            this.code = failed.getCode();
+            this.msg = failed.getMsg();
         }
-
     }
 }

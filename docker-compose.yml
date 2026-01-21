@@ -5,7 +5,7 @@ services:
     # image: board:latest
 
     env_file:
-      - .env
+      - .env.prod
 
     ports:
       - "${SERVER_PORT:-8080}:8080"
