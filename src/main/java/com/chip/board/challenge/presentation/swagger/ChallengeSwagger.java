@@ -32,7 +32,6 @@ public interface ChallengeSwagger {
     ResponseEntity<ResponseBody<ChallengeInfoResponse>> hold(ChallengeCreateRequest request);
 
     @Operation(summary = "챌린지 정보 조회", description = "challengeId로 챌린지 정보를 조회합니다.")
-    @Parameter(name = "challengeId", description = "챌린지 ID", required = true, example = "1")
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(
                     status = HttpStatus.OK,
@@ -43,6 +42,6 @@ public interface ChallengeSwagger {
                     @SwaggerApiFailedResponse(ErrorCode.CHALLENGE_NOT_FOUND)
             }
     )
-    ResponseEntity<ResponseBody<ChallengeInfoResponse>> info(Long challengeId);
+    ResponseEntity<ResponseBody<ChallengeInfoResponse>> info(@Parameter(name = "challengeId", description = "챌린지 ID", required = true, example = "1") Long challengeId);
 }
 

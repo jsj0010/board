@@ -33,7 +33,8 @@ public interface LoginSwagger {
     @Parameter(
             name = "refresh_token",
             description = "Refresh Token (Cookie)",
-            required = false
+            required = false,
+            in = io.swagger.v3.oas.annotations.enums.ParameterIn.COOKIE
     )
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(
@@ -52,7 +53,8 @@ public interface LoginSwagger {
     @Parameter(
             name = "refresh_token",
             description = "Refresh Token (Cookie)",
-            required = false
+            required = false,
+            in = io.swagger.v3.oas.annotations.enums.ParameterIn.COOKIE
     )
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(
