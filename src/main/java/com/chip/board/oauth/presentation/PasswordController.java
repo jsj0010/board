@@ -6,6 +6,7 @@ import com.chip.board.oauth.application.service.PasswordResetService;
 import com.chip.board.oauth.presentation.dto.request.PasswordMailRequest;
 import com.chip.board.oauth.presentation.dto.request.PasswordResetRequest;
 import com.chip.board.oauth.presentation.dto.request.PasswordVerifyRequest;
+import com.chip.board.oauth.presentation.swagger.PasswordSwagger;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth/password")
 @RequiredArgsConstructor
-public class PasswordController {
+public class PasswordController implements PasswordSwagger {
 
     private final PasswordResetService passwordResetService;
 

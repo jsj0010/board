@@ -3,6 +3,7 @@ package com.chip.board.challenge.presentation;
 import com.chip.board.challenge.presentation.dto.request.ChallengeCreateRequest;
 import com.chip.board.challenge.presentation.dto.response.ChallengeInfoResponse;
 import com.chip.board.challenge.application.service.ChallengeCommandService;
+import com.chip.board.challenge.presentation.swagger.ChallengeSwagger;
 import com.chip.board.global.base.dto.ResponseBody;
 import com.chip.board.global.base.dto.ResponseUtils;
 import jakarta.validation.Valid;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/challenges")
-public class ChallengeController {
+public class ChallengeController implements ChallengeSwagger {
 
     private final ChallengeCommandService challengeCommandService;
 

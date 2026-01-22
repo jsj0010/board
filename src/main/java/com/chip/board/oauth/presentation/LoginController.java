@@ -7,6 +7,7 @@ import com.chip.board.global.jwt.dto.response.TokenPair;
 import com.chip.board.oauth.application.service.LoginService;
 import com.chip.board.oauth.application.service.TokenRefreshService;
 import com.chip.board.oauth.presentation.mapper.AuthTokenResponseMapper;
+import com.chip.board.oauth.presentation.swagger.LoginSwagger;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class LoginController {
+public class LoginController implements LoginSwagger {
 
     private final LoginService loginService;
     private final AuthTokenResponseMapper authTokenResponseMapper;
