@@ -16,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentFacade {
 
     private final CommentService commentService;
-    private final CommentPort commentPort;
-    private final UserRepositoryPort userRepositoryPort;
 
     @Transactional
     public IdResponse addComment(long questionId, long userId, String content) {

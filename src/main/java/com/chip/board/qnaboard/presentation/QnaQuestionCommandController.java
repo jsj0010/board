@@ -3,9 +3,7 @@ package com.chip.board.qnaboard.presentation;
 import com.chip.board.global.base.dto.ResponseBody;
 import com.chip.board.global.base.dto.ResponseUtils;
 import com.chip.board.global.jwt.annotation.CurrentUserId;
-import com.chip.board.qnaboard.application.service.CommentFacade;
-import com.chip.board.qnaboard.application.service.QnaQuestionFacade;
-import com.chip.board.qnaboard.presentation.dto.request.question.CreateCommentRequest;
+import com.chip.board.qnaboard.application.service.QuestionFacade;
 import com.chip.board.qnaboard.presentation.dto.request.question.CreateQuestionRequest;
 import com.chip.board.qnaboard.presentation.dto.request.question.UpdateQuestionRequest;
 import com.chip.board.qnaboard.presentation.dto.response.question.IdResponse;
@@ -25,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
 public class QnaQuestionCommandController {
 
-    private final QnaQuestionFacade facade;
+    private final QuestionFacade facade;
 
     @PostMapping
     public ResponseEntity<ResponseBody<IdResponse>> create(

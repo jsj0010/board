@@ -9,6 +9,7 @@ import com.chip.board.qnaboard.presentation.dto.request.question.CreateCommentRe
 import com.chip.board.qnaboard.presentation.dto.response.question.IdResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ public class QnaCommentCommandController {
             @CurrentUserId Long userId,
             @RequestBody @Valid CreateCommentRequest req
     ) {
-        return ResponseEntity.ok(
+        return ResponseEntity.status(HttpStatus.CREATED).body(
                 ResponseUtils.createSuccessResponse(
                         commentFacade.addComment(questionId, userId, req.content())
                 )

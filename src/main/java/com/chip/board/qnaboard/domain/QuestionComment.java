@@ -38,7 +38,7 @@ public class QuestionComment {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-    @Column(name = "created_at", nullable = false, updatable = false, insertable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public QuestionComment(Long questionId, Long authorId, String authorName, String content) {

@@ -3,10 +3,10 @@ package com.chip.board.qnaboard.application.service;
 import com.chip.board.global.base.exception.ErrorCode;
 import com.chip.board.global.base.exception.ServiceException;
 import com.chip.board.qnaboard.application.port.CommentPort;
-import com.chip.board.qnaboard.application.port.QuestionCommandPort;
 import com.chip.board.qnaboard.application.port.QuestionQueryPort;
 import com.chip.board.qnaboard.domain.QuestionComment;
 import com.chip.board.register.application.port.UserRepositoryPort;
+import com.chip.board.register.domain.Role;
 import com.chip.board.register.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,20 +33,19 @@ public class CommentService {
 
     @Transactional
     public void updateComment(long questionId, long commentId, String content, long requesterId) {
-        QuestionComment comment = commentPort.findActiveById(commentId)
-                .orElseThrow(() -> new ServiceException(ErrorCode.QNA_COMMENT_NOT_FOUND));
-
-        if (!comment.getQuestionId().equals(questionId)) {
-            throw new ServiceException(ErrorCode.QNA_COMMENT_NOT_FOUND);
-        }
-
-        validateOwnerOrAdmin(comment.getAuthorId(), requesterId);
+        QuestionComment comment = findAndValidateComment(questionId, commentId, requesterId);
 
         comment.changeContent(content); // dirty checking
     }
 
     @Transactional
     public void deleteComment(long questionId, long commentId, long requesterId) {
+        QuestionComment comment = findAndValidateComment(questionId, commentId, requesterId);
+
+        comment.softDelete(); // dirty checking
+    }
+
+    private QuestionComment findAndValidateComment(long questionId, long commentId, long requesterId){
         QuestionComment comment = commentPort.findActiveById(commentId)
                 .orElseThrow(() -> new ServiceException(ErrorCode.QNA_COMMENT_NOT_FOUND));
 
@@ -55,8 +54,7 @@ public class CommentService {
         }
 
         validateOwnerOrAdmin(comment.getAuthorId(), requesterId);
-
-        comment.softDelete(); // dirty checking
+        return comment;
     }
 
     private void validateQuestionExists(long questionId) {
@@ -74,7 +72,7 @@ public class CommentService {
         if (authorId == requesterId) return;
 
         User requester = getUserOrThrow(requesterId);
-        if (requester.getRole() == com.chip.board.register.domain.Role.ADMIN) return;
+        if (requester.getRole() == Role.ADMIN) return;
 
         throw new ServiceException(ErrorCode.QNA_COMMENT_FORBIDDEN);
     }

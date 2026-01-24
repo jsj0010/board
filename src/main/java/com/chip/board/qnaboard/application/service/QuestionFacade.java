@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class QnaQuestionFacade {
+public class QuestionFacade {
 
     private final QuestionService questionService;
     private final TimeAgoFormatter timeAgoFormatter;
