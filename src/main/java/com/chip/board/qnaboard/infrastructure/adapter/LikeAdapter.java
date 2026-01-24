@@ -17,14 +17,20 @@ public class LikeAdapter implements LikePort {
 
     @Override
     @Transactional
-    public boolean toggleLike(long questionId, long userId) {
+    public ToggleResult toggle(long questionId, long userId) {
+        boolean liked;
         Optional<QuestionLike> existing = likeJpaRepository.findByQuestionIdAndUserId(questionId, userId);
+
         if (existing.isPresent()) {
             likeJpaRepository.delete(existing.get());
-            return false;
+            liked = false;
+        } else {
+            likeJpaRepository.save(new QuestionLike(questionId, userId));
+            liked = true;
         }
-        likeJpaRepository.save(new QuestionLike(questionId, userId));
-        return true;
+
+        long likeCount = likeJpaRepository.countByQuestionId(questionId);
+        return new ToggleResult(liked, likeCount);
     }
 
     @Override

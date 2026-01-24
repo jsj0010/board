@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface QuestionQueryPort {
     Page<QuestionSummaryRow> findSummaries(Pageable pageable);
     Optional<QuestionDetailView> findDetail(long questionId);
-
+    boolean existsActiveById(long questionId);
     record QuestionDetailView(
             long id,
             String title,

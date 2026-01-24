@@ -48,8 +48,5 @@ public class QuestionComment {
         this.content = content;
     }
 
-    @PrePersist
-    void prePersist() { this.createdAt = LocalDateTime.now(); }
-
     public void softDelete() { this.deleted = true; }
 }

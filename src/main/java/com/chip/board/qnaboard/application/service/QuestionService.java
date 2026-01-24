@@ -49,7 +49,7 @@ public class QuestionService {
 
     @Transactional
     public long addComment(long questionId, long userId, String content) {
-        getDetail(questionId);
+        validateQuestionExists(questionId);
 
         User user = getUserOrThrow(userId);
         QuestionComment saved = commentPort.save(
@@ -60,14 +60,14 @@ public class QuestionService {
 
     @Transactional(readOnly = true)
     public List<QuestionComment> listComments(long questionId) {
-        getDetail(questionId);
+        validateQuestionExists(questionId);
         return commentPort.findByQuestionId(questionId);
     }
 
     @Transactional
-    public boolean toggleLike(long questionId, long userId) {
-        getDetail(questionId);
-        return likePort.toggleLike(questionId, userId);
+    public LikePort.ToggleResult toggleLike(long questionId, long userId) {
+        validateQuestionExists(questionId);
+        return likePort.toggle(questionId, userId);
     }
 
     @Transactional
@@ -97,8 +97,24 @@ public class QuestionService {
     }
 
     private void validateOwnerOrAdmin(QuestionQueryPort.QuestionDetailView view, long requesterId) {
-        if (view.authorId() != requesterId) {
-            throw new ServiceException(ErrorCode.QNA_QUESTION_FORBIDDEN);
+        if (view.authorId() == requesterId) {
+            return;
+        }
+
+        User requester = userRepositoryPort.findById(requesterId)
+                .orElseThrow(() -> new ServiceException(ErrorCode.USER_NOT_FOUND));
+
+        if (requester.getRole() == com.chip.board.register.domain.Role.ADMIN) {
+            return;
+        }
+
+        // 3) 나머지는 차단
+        throw new ServiceException(ErrorCode.QNA_QUESTION_FORBIDDEN);
+    }
+
+    private void validateQuestionExists(long questionId) {
+        if (!queryPort.existsActiveById(questionId)) {
+            throw new ServiceException(ErrorCode.QNA_QUESTION_NOT_FOUND);
         }
     }
 }

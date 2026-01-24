@@ -1,6 +1,7 @@
 package com.chip.board.qnaboard.application.service;
 
 import com.chip.board.qnaboard.application.component.reader.TimeAgoFormatter;
+import com.chip.board.qnaboard.application.port.LikePort;
 import com.chip.board.qnaboard.application.port.QuestionQueryPort;
 import com.chip.board.qnaboard.infrastructure.persistence.dto.QuestionSummaryRow;
 import com.chip.board.qnaboard.presentation.dto.response.*;
@@ -72,9 +73,8 @@ public class QnaQuestionFacade {
 
     @Transactional
     public ToggleLikeResponse toggleLike(long questionId, long userId) {
-        boolean liked = questionService.toggleLike(questionId, userId);
-        long likeCount = questionService.getDetail(questionId).likeCount();
-        return new ToggleLikeResponse(liked, likeCount);
+        LikePort.ToggleResult result = questionService.toggleLike(questionId, userId);
+        return new ToggleLikeResponse(result.liked(), result.likeCount());
     }
 
     @Transactional

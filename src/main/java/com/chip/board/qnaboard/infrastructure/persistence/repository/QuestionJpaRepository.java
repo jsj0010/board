@@ -2,6 +2,7 @@ package com.chip.board.qnaboard.infrastructure.persistence.repository;
 
 import com.chip.board.qnaboard.domain.Question;
 import com.chip.board.qnaboard.infrastructure.persistence.dto.QuestionSummaryRow;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -30,6 +31,8 @@ public interface QuestionJpaRepository extends JpaRepository<Question, Long> {
         from Question q
         where q.id = :id and q.deleted = false
     """)
-    Optional<Question> findActiveById(long id);
+    Optional<Question> findActiveById(@Param("id") long id);
+
+    boolean existsByIdAndDeletedFalse(long id);
 }
 

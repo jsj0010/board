@@ -41,5 +41,10 @@ public class QuestionQueryAdapter implements QuestionQueryPort {
                 )
         );
     }
+
+    @Override
+    public boolean existsActiveById(long questionId) {
+        return questionJpaRepository.existsByIdAndDeletedFalse(questionId);
+    }
 }
 
