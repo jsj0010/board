@@ -8,6 +8,7 @@ import com.chip.board.qnaboard.presentation.dto.request.question.CreateQuestionR
 import com.chip.board.qnaboard.presentation.dto.request.question.UpdateQuestionRequest;
 import com.chip.board.qnaboard.presentation.dto.response.question.IdResponse;
 import com.chip.board.qnaboard.presentation.dto.response.question.ToggleLikeResponse;
+import com.chip.board.qnaboard.presentation.swagger.QnaQuestionCommandSwagger;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/qna/questions")
 @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-public class QnaQuestionCommandController {
+public class QnaQuestionCommandController implements QnaQuestionCommandSwagger {
 
     private final QuestionFacade facade;
 

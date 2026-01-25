@@ -5,6 +5,7 @@ import com.chip.board.global.base.dto.ResponseUtils;
 import com.chip.board.qnaboard.application.service.QuestionFacade;
 import com.chip.board.qnaboard.presentation.dto.response.question.QuestionDetailResponse;
 import com.chip.board.qnaboard.presentation.dto.response.question.QuestionListResponse;
+import com.chip.board.qnaboard.presentation.swagger.QnaQuestionQuerySwagger;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequestMapping("/api/qna/questions")
-public class QnaQuestionQueryController {
+public class QnaQuestionQueryController implements QnaQuestionQuerySwagger {
 
     private final QuestionFacade facade;
 

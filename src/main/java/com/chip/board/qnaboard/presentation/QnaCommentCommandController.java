@@ -7,6 +7,7 @@ import com.chip.board.qnaboard.application.service.CommentFacade;
 import com.chip.board.qnaboard.presentation.dto.request.comment.UpdateCommentRequest;
 import com.chip.board.qnaboard.presentation.dto.request.question.CreateCommentRequest;
 import com.chip.board.qnaboard.presentation.dto.response.question.IdResponse;
+import com.chip.board.qnaboard.presentation.swagger.QnaCommentCommandSwagger;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/qna/questions/{questionId}/comments")
 @RequiredArgsConstructor
-public class QnaCommentCommandController {
+public class QnaCommentCommandController implements QnaCommentCommandSwagger {
 
     private final CommentFacade commentFacade;
 
