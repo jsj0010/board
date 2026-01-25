@@ -22,14 +22,14 @@ public class ChallengeSyncScheduler {
     public void tick() {
         LocalTime now = LocalTime.now(clock);
 
-        final LocalTime syncStart = LocalTime.of(12, 23);
+        final LocalTime syncStart = LocalTime.of(19, 1);
         final LocalTime syncEnd = LocalTime.of(23, 0);
         // 00:01 <= now < 03:00
         if (now.isBefore(syncStart) || !now.isBefore(syncEnd)) {
             return;
         }
 
-        LocalDateTime windowStart = LocalDate.now(clock).atTime(12, 23, 0);
+        LocalDateTime windowStart = LocalDate.now(clock).atTime(19, 1, 0);
         challengeSyncService.tickOnce(windowStart); // tick 1회당 API 최대 1번
     }
 }

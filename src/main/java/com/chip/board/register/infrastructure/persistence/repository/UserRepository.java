@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByBojId(String bojId);
 
     @Query("""
-    select new com.chip.board.score.infrastructure.persistence.dto.ChallengeRankingRow(
+    select com.chip.board.register.application.port.dto.ChallengeRankingRow(
         u.id,
         u.name,
         u.bojId,

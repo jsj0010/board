@@ -1,5 +1,9 @@
 package com.chip.board.score.application.service;
 
+import com.chip.board.challenge.application.port.ChallengeLoadPort;
+import com.chip.board.challenge.domain.Challenge;
+import com.chip.board.global.base.exception.ErrorCode;
+import com.chip.board.global.base.exception.ServiceException;
 import com.chip.board.register.application.port.UserRepositoryPort;
 import com.chip.board.register.application.port.dto.ChallengeRankingRow;
 import com.chip.board.score.presentation.dto.response.ChallengeRankingItemResponse;
@@ -18,8 +22,12 @@ import java.util.List;
 public class ChallengeRankingQueryService {
 
     private final UserRepositoryPort userRepositoryPort;
+    private final ChallengeLoadPort challengeLoadPort;
 
-    public ChallengeRankingResponse getRankingsAllUsers(long challengeId, int page, int size) {
+    public ChallengeRankingResponse getRankingsAllUsers(Long challengeId, int page, int size) {
+
+        challengeLoadPort.findById(challengeId)
+                .orElseThrow(() -> new ServiceException(ErrorCode.CHALLENGE_NOT_FOUND));
 
         Pageable pageable = PageRequest.of(page, size);
 

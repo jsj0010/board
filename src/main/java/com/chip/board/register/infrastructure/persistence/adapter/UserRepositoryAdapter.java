@@ -37,7 +37,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     @Override
-    public Page<ChallengeRankingRow> findRankingsAllUsers(long challengeId, Pageable pageable) {
+    public Page<ChallengeRankingRow> findRankingsAllUsers(Long challengeId, Pageable pageable) {
         return userRepository.findRankingsAllUsers(challengeId, pageable);
     }
 
