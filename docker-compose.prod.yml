@@ -2,6 +2,7 @@ services:
   db:
     image: mysql:8.0
     environment:
+      TZ: Asia/Seoul
       MYSQL_DATABASE: earlybird
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
@@ -25,6 +26,8 @@ services:
 
   app:
     image: earlybird-app:latest
+    environment:
+      TZ: Asia/Seoul
     env_file: [.env.prod]
     ports: ["8080:8080"]
     restart: unless-stopped

@@ -1,5 +1,6 @@
 package com.chip.board.score.presentation.swagger;
 
+import com.chip.board.global.base.dto.ResponseBody;
 import com.chip.board.global.base.exception.ErrorCode;
 import com.chip.board.global.config.swagger.SwaggerApiFailedResponse;
 import com.chip.board.global.config.swagger.SwaggerApiResponses;
@@ -32,7 +33,7 @@ public interface ChallengeRankingSwagger {
                     @SwaggerApiFailedResponse(ErrorCode.CHALLENGE_NOT_FOUND)
             }
     )
-    ResponseEntity<ChallengeRankingResponse> getRankings(
+    ResponseEntity<ResponseBody<ChallengeRankingResponse>> getRankings(
             @Parameter(name = "challengeId", description = "챌린지 ID", required = true, example = "1")
             @PathVariable("challengeId") Long challengeId,
 

@@ -54,6 +54,11 @@ public class ChallengePersistenceAdapter implements ChallengeLoadPort, Challenge
     }
 
     @Override
+    public boolean existsById(Long id){
+        return challengeRepository.existsById(id);
+    }
+
+    @Override
     public Challenge save(Challenge challenge) {
         return challengeRepository.save(challenge);
     }

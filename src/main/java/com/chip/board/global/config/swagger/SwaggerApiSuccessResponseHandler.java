@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
+import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.converter.ResolvedSchema;
 
 @Component
 @RequiredArgsConstructor
@@ -93,7 +96,16 @@ public class SwaggerApiSuccessResponseHandler {
     private Schema<?> schemaOf(Class<?> type) {
         Schema<?> primitive = primitiveSchema(type);
         if (primitive != null) return primitive;
-        return refSchema(type);
+
+        // ✅ DTO/record 등은 실제 필드를 가진 스키마를 생성해서 inline으로 넣는다
+        ResolvedSchema resolved = ModelConverters.getInstance()
+                .readAllAsResolvedSchema(new AnnotatedType(type).resolveAsRef(false));
+
+        Schema<?> schema = resolved.schema;
+        if (schema == null) {
+            return new Schema<>().type("object");
+        }
+        return schema;
     }
 
     private Schema<?> primitiveSchema(Class<?> type) {
