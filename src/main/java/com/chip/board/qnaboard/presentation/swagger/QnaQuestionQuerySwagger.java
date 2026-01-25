@@ -17,8 +17,8 @@ import org.springframework.http.ResponseEntity;
 public interface QnaQuestionQuerySwagger {
 
     @Operation(summary = "질문 목록 조회", description = "페이지네이션으로 질문 목록을 조회합니다.")
-    @Parameter(name = "page", description = "페이지(0부터)", required = false)
-    @Parameter(name = "size", description = "페이지 크기(1~100)", required = false)
+    @Parameter(name = "page", description = "페이지(0부터)", required = false, schema = @io.swagger.v3.oas.annotations.media.Schema(type = "integer", defaultValue = "0"))
+    @Parameter(name = "size", description = "페이지 크기(1~100)", required = false, schema = @io.swagger.v3.oas.annotations.media.Schema(type = "integer", defaultValue = "10"))
     @SwaggerApiResponses(
             success = @SwaggerApiSuccessResponse(
                     status = HttpStatus.OK,

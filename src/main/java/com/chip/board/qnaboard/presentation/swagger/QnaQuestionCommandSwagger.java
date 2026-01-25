@@ -29,7 +29,7 @@ public interface QnaQuestionCommandSwagger {
                     @SwaggerApiFailedResponse(ErrorCode.USER_NOT_FOUND)
             }
     )
-    ResponseEntity<ResponseBody<IdResponse>> create(Long userId, CreateQuestionRequest req);
+    ResponseEntity<ResponseBody<IdResponse>> create(@Parameter(hidden = true) Long userId, CreateQuestionRequest req);
 
     @Operation(summary = "좋아요 토글", description = "질문 좋아요를 토글합니다(좋아요/취소).")
     @Parameter(name = "id", description = "질문 ID", required = true)
@@ -44,7 +44,7 @@ public interface QnaQuestionCommandSwagger {
 
             }
     )
-    ResponseEntity<ResponseBody<ToggleLikeResponse>> toggleLike(long id, Long userId);
+    ResponseEntity<ResponseBody<ToggleLikeResponse>> toggleLike(long id, @Parameter(hidden = true) Long userId);
 
     @Operation(summary = "해결 상태 변경", description = "질문 해결 상태를 변경합니다. solved=true/false")
     @Parameter(name = "id", description = "질문 ID", required = true)
@@ -62,7 +62,7 @@ public interface QnaQuestionCommandSwagger {
 
             }
     )
-    ResponseEntity<ResponseBody<String>> markSolved(long id, Long userId, boolean solved);
+    ResponseEntity<ResponseBody<String>> markSolved(long id, @Parameter(hidden = true) Long userId, boolean solved);
 
     @Operation(summary = "질문 수정", description = "질문 제목/내용을 수정합니다.")
     @Parameter(name = "id", description = "질문 ID", required = true)
@@ -78,7 +78,7 @@ public interface QnaQuestionCommandSwagger {
                     @SwaggerApiFailedResponse(ErrorCode.QNA_QUESTION_FORBIDDEN)
             }
     )
-    ResponseEntity<ResponseBody<String>> update(long id, Long userId, UpdateQuestionRequest req);
+    ResponseEntity<ResponseBody<String>> update(long id, @Parameter(hidden = true) Long userId, UpdateQuestionRequest req);
 
     @Operation(summary = "질문 삭제", description = "질문을 삭제(soft delete)합니다.")
     @Parameter(name = "id", description = "질문 ID", required = true)
@@ -94,5 +94,5 @@ public interface QnaQuestionCommandSwagger {
                     @SwaggerApiFailedResponse(ErrorCode.QNA_QUESTION_FORBIDDEN)
             }
     )
-    ResponseEntity<ResponseBody<String>> delete(long id, Long userId);
+    ResponseEntity<ResponseBody<String>> delete(long id,@Parameter(hidden = true)  Long userId);
 }

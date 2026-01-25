@@ -30,7 +30,7 @@ public interface QnaCommentCommandSwagger {
                     @SwaggerApiFailedResponse(ErrorCode.QNA_QUESTION_NOT_FOUND)
             }
     )
-    ResponseEntity<ResponseBody<IdResponse>> addComment(long questionId, Long userId, CreateCommentRequest req);
+    ResponseEntity<ResponseBody<IdResponse>> addComment(long questionId, @Parameter(hidden = true) Long userId, CreateCommentRequest req);
 
     @Operation(summary = "댓글 수정", description = "특정 질문(questionId)의 댓글(commentId)을 수정합니다.")
     @Parameter(name = "questionId", description = "질문 ID", required = true)
@@ -46,7 +46,7 @@ public interface QnaCommentCommandSwagger {
                     @SwaggerApiFailedResponse(ErrorCode.QNA_COMMENT_FORBIDDEN)
             }
     )
-    ResponseEntity<ResponseBody<String>> update(long questionId, long commentId, Long userId, UpdateCommentRequest req);
+    ResponseEntity<ResponseBody<String>> update(long questionId, long commentId, @Parameter(hidden = true) Long userId, UpdateCommentRequest req);
 
     @Operation(summary = "댓글 삭제", description = "특정 질문(questionId)의 댓글(commentId)을 삭제(soft delete)합니다.")
     @Parameter(name = "questionId", description = "질문 ID", required = true)
@@ -62,5 +62,5 @@ public interface QnaCommentCommandSwagger {
                     @SwaggerApiFailedResponse(ErrorCode.QNA_COMMENT_FORBIDDEN)
             }
     )
-    ResponseEntity<ResponseBody<String>> delete(long questionId, long commentId, Long userId);
+    ResponseEntity<ResponseBody<String>> delete(long questionId, long commentId, @Parameter(hidden = true) Long userId);
 }
