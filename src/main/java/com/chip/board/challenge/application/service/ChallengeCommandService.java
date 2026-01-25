@@ -1,10 +1,12 @@
 package com.chip.board.challenge.application.service;
 
 import com.chip.board.challenge.application.port.ChallengeLoadPort;
+import com.chip.board.challenge.application.port.dto.ChallengeRankingAggregate;
 import com.chip.board.challenge.application.port.ChallengeSavePort;
 import com.chip.board.challenge.domain.Challenge;
 import com.chip.board.challenge.presentation.dto.request.ChallengeCreateRequest;
 import com.chip.board.challenge.presentation.dto.response.ChallengeInfoResponse;
+import com.chip.board.challenge.presentation.dto.response.ChallengeDetailInfoResponse;
 import com.chip.board.global.base.exception.ErrorCode;
 import com.chip.board.global.base.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
@@ -44,14 +46,33 @@ public class ChallengeCommandService {
 
     @Transactional(readOnly = true)
     public ChallengeInfoResponse getInfo(Long challengeId) {
-        Challenge c = challengeLoadPort.findById(challengeId)
+        Challenge challenge = challengeLoadPort.findById(challengeId)
                 .orElseThrow(() -> new ServiceException(ErrorCode.CHALLENGE_NOT_FOUND));
 
         return new ChallengeInfoResponse(
-                c.getTitle(),
-                c.getStartAt(),
-                c.getEndAt(),
-                c.getStatus()
+                challenge.getTitle(),
+                challenge.getStartAt(),
+                challenge.getEndAt(),
+                challenge.getStatus()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public ChallengeDetailInfoResponse getDetailInfo(Long challengeId) {
+        Challenge challenge = challengeLoadPort.findById(challengeId)
+                .orElseThrow(() -> new ServiceException(ErrorCode.CHALLENGE_NOT_FOUND));
+
+        ChallengeRankingAggregate agg = challengeLoadPort.getRankingAggregate(challengeId);
+
+        return new ChallengeDetailInfoResponse(
+                challenge.getTitle(),
+                challenge.getStartAt(),
+                challenge.getEndAt(),
+                challenge.getStatus(),
+                agg.totalUserCount(),
+                agg.participantsCount(),
+                agg.totalSolvedCount(),
+                agg.lastUpdatedAt()
         );
     }
 }

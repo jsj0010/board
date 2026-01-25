@@ -3,6 +3,7 @@ package com.chip.board.challenge.presentation;
 import com.chip.board.challenge.presentation.dto.request.ChallengeCreateRequest;
 import com.chip.board.challenge.presentation.dto.response.ChallengeInfoResponse;
 import com.chip.board.challenge.application.service.ChallengeCommandService;
+import com.chip.board.challenge.presentation.dto.response.ChallengeDetailInfoResponse;
 import com.chip.board.challenge.presentation.swagger.ChallengeSwagger;
 import com.chip.board.global.base.dto.ResponseBody;
 import com.chip.board.global.base.dto.ResponseUtils;
@@ -26,11 +27,20 @@ public class ChallengeController implements ChallengeSwagger {
     public ResponseEntity<ResponseBody<ChallengeInfoResponse>> hold(@RequestBody @Valid ChallengeCreateRequest request) {
         return ResponseEntity.ok(ResponseUtils.createSuccessResponse( challengeCommandService.hold(request)));
     }
-    @GetMapping("/info")
+
+    @GetMapping("/{challengeId}/info/summary")
     public ResponseEntity<ResponseBody<ChallengeInfoResponse>> info(
-            @RequestParam("challengeId") Long challengeId
+            @PathVariable("challengeId") Long challengeId
     ) {
         ChallengeInfoResponse data = challengeCommandService.getInfo(challengeId);
+        return ResponseEntity.ok(ResponseUtils.createSuccessResponse(data));
+    }
+
+    @GetMapping("/{challengeId}/info/details")
+    public ResponseEntity<ResponseBody<ChallengeDetailInfoResponse>> detailInfo(
+            @PathVariable("challengeId") Long challengeId
+    ) {
+        ChallengeDetailInfoResponse data = challengeCommandService.getDetailInfo(challengeId);
         return ResponseEntity.ok(ResponseUtils.createSuccessResponse(data));
     }
 

@@ -1,10 +1,12 @@
 package com.chip.board.challenge.infrastructure.persistence.adapter;
 
 import com.chip.board.challenge.application.port.ChallengeLoadPort;
+import com.chip.board.challenge.application.port.dto.ChallengeRankingAggregate;
 import com.chip.board.challenge.application.port.ChallengeSavePort;
 import com.chip.board.challenge.domain.Challenge;
 import com.chip.board.challenge.domain.ChallengeStatus;
 import com.chip.board.challenge.infrastructure.persistence.repository.ChallengeRepository;
+import com.chip.board.register.application.port.UserRepositoryPort;
 import com.chip.board.syncproblem.application.port.dto.ChallengeSyncSnapshot;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
@@ -22,6 +24,8 @@ public class ChallengePersistenceAdapter implements ChallengeLoadPort, Challenge
     private final ChallengeRepository challengeRepository;
     private final EntityManager em;
 
+    private final UserRepositoryPort userRepositoryPort;
+
     @Override
     public Optional<Challenge> findActive() {
         return challengeRepository.findFirstByStatus(ChallengeStatus.ACTIVE);
@@ -35,7 +39,7 @@ public class ChallengePersistenceAdapter implements ChallengeLoadPort, Challenge
     }
 
     @Override
-    public Optional<Challenge> findById(long id) {
+    public Optional<Challenge> findById(Long id) {
         return challengeRepository.findById(id);
     }
 
@@ -76,5 +80,22 @@ public class ChallengePersistenceAdapter implements ChallengeLoadPort, Challenge
         return challengeRepository.findFirstByStatus(ChallengeStatus.ACTIVE)
                 .or(() -> challengeRepository.findTopByStatusAndCloseFinalizedFalseOrderByEndAtDesc(ChallengeStatus.CLOSED))
                 .map(ChallengeSyncSnapshot::from);
+    }
+
+    @Override
+    public ChallengeRankingAggregate getRankingAggregate(Long challengeId) {
+        long totalUserCount = userRepositoryPort.countByDeletedFalse();
+
+        ChallengeRepository.RankingSummaryAgg agg = challengeRepository.findRankingSummaryAgg(challengeId);
+
+        long participantsCount = agg.getParticipantsCount();
+        long totalSolvedCount = agg.getTotalSolvedCount();
+
+        return new ChallengeRankingAggregate(
+                totalUserCount,
+                participantsCount,
+                totalSolvedCount,
+                agg.getLastUpdatedAt()
+        );
     }
 }

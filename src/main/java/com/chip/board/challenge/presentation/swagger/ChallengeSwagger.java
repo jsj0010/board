@@ -1,6 +1,7 @@
 package com.chip.board.challenge.presentation.swagger;
 
 import com.chip.board.challenge.presentation.dto.request.ChallengeCreateRequest;
+import com.chip.board.challenge.presentation.dto.response.ChallengeDetailInfoResponse;
 import com.chip.board.challenge.presentation.dto.response.ChallengeInfoResponse;
 import com.chip.board.global.base.dto.ResponseBody;
 import com.chip.board.global.base.exception.ErrorCode;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Tag(name = "Challenge", description = "챌린지 생성/조회 API")
 public interface ChallengeSwagger {
@@ -42,6 +44,24 @@ public interface ChallengeSwagger {
                     @SwaggerApiFailedResponse(ErrorCode.CHALLENGE_NOT_FOUND)
             }
     )
-    ResponseEntity<ResponseBody<ChallengeInfoResponse>> info(@Parameter(name = "challengeId", description = "챌린지 ID", required = true, example = "1") Long challengeId);
-}
+    ResponseEntity<ResponseBody<ChallengeInfoResponse>> info(
+            @Parameter(name = "challengeId", description = "챌린지 ID", required = true, example = "1")
+            @PathVariable("challengeId") Long challengeId
+    );
 
+    @Operation(summary = "챌린지 상세정보 조회", description = "challengeId로 챌린지 상세정보를 조회합니다.")
+    @SwaggerApiResponses(
+            success = @SwaggerApiSuccessResponse(
+                    status = HttpStatus.OK,
+                    response = ChallengeDetailInfoResponse.class,
+                    description = "챌린지 상세 조회 성공"
+            ),
+            errors = {
+                    @SwaggerApiFailedResponse(ErrorCode.CHALLENGE_NOT_FOUND)
+            }
+    )
+    ResponseEntity<ResponseBody<ChallengeDetailInfoResponse>> detailInfo(
+            @Parameter(name = "challengeId", description = "챌린지 ID", required = true, example = "1")
+            @PathVariable("challengeId") Long challengeId
+    );
+}

@@ -1,4 +1,4 @@
-package com.chip.board.score.infrastructure.repository;
+package com.chip.board.score.infrastructure.persistence.repository;
 
 import com.chip.board.score.application.port.ScoreEventPort;
 import lombok.RequiredArgsConstructor;

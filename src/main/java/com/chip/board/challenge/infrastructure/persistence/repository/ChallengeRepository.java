@@ -33,4 +33,20 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     boolean existsByStatusAndCloseFinalized(ChallengeStatus status, boolean closeFinalized);
 
     Optional<Challenge> findTopByStatusOrderByStartAtAsc(ChallengeStatus status);
+
+    @Query(value = """
+        SELECT
+          COUNT(*) AS participantsCount,
+          COALESCE(SUM(solved_count), 0) AS totalSolvedCount,
+          MAX(updated_at) AS lastUpdatedAt
+        FROM challenge_user_result
+        WHERE challenge_id = :challengeId
+        """, nativeQuery = true)
+    RankingSummaryAgg findRankingSummaryAgg(@Param("challengeId") Long challengeId);
+
+    interface RankingSummaryAgg {
+        Long getParticipantsCount();
+        Long getTotalSolvedCount();
+        LocalDateTime getLastUpdatedAt();
+    }
 }
