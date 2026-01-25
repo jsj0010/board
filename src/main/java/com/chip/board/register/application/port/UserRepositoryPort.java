@@ -17,7 +17,7 @@ public interface UserRepositoryPort {
 
     User save(User user);
 
-    Page<ChallengeRankingRow> findRankingsAllUsers(long challengeId, Pageable pageable);
+    Page<ChallengeRankingRow> findRankingsAllUsers(Long challengeId, Pageable pageable);
 
     long countByDeletedFalse();
 }

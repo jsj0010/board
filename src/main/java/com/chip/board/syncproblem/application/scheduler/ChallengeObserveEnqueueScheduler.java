@@ -22,7 +22,7 @@ public class ChallengeObserveEnqueueScheduler {
     private final ChallengeObserveEnqueueService challengeObserveEnqueueService;
     private final Clock clock;
 
-    @Scheduled(cron = "0 22 12 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 19 * * *", zone = "Asia/Seoul")
     public void enqueue() {
 
         Optional<ChallengeSyncSnapshot> snapOpt = syncIndexPort.load();
@@ -31,7 +31,7 @@ public class ChallengeObserveEnqueueScheduler {
         ChallengeSyncSnapshot snap = snapOpt.get();
         if (snap.status() == ChallengeStatus.CLOSED && snap.closeFinalized()) return;
 
-        LocalDateTime windowStart = LocalDate.now(clock).atTime(12, 22, 0);
+        LocalDateTime windowStart = LocalDate.now(clock).atTime(19, 0, 0);
         challengeObserveEnqueueService.enqueueObserveWindow(windowStart);
     }
 

@@ -13,18 +13,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserSolvedProblemPortAdapter implements UserSolvedProblemPort {
 
-    private final UserSolvedProblemJdbcRepository repo;
+    private final UserSolvedProblemJdbcRepository userSolvedProblemJdbcRepository;
 
     @Override
     public void upsertBatch(long userId, List<SolvedProblemItem> items, CreditedAtMode mode) {
         if (items == null || items.isEmpty()) return;
 
         // infra dto로 변환
-        List<com.chip.board.baselinesync.infrastructure.persistence.dto.SolvedProblemItem> mapped =
-                items.stream()
-                        .map(i -> new com.chip.board.baselinesync.infrastructure.persistence.dto.SolvedProblemItem(i.problemId(), i.level()))
-                        .toList();
 
-        repo.upsertBatch(userId, mapped, mode);
+
+        userSolvedProblemJdbcRepository.upsertBatch(userId, items, mode);
     }
 }
