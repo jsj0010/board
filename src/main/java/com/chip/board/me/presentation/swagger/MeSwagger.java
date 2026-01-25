@@ -1,4 +1,4 @@
-package com.chip.board.me.presentation.dto.swagger;
+package com.chip.board.me.presentation.swagger;
 
 import com.chip.board.global.base.dto.ResponseBody;
 import com.chip.board.global.base.exception.ErrorCode;
@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,7 +40,7 @@ public interface MeSwagger {
             }
     )
     @GetMapping("/{challengeId}/solved-problems")
-    ResponseBody<ResponseBody<DailySolvedProblemsResponse>> getDailySolvedProblems(
+    ResponseEntity<ResponseBody<DailySolvedProblemsResponse>> getDailySolvedProblems(
             @Parameter(hidden = true)
             Long userId,
 

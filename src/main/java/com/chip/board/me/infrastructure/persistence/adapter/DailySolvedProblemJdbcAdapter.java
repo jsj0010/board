@@ -1,4 +1,4 @@
-package com.chip.board.me.infrastructure.persistence;
+package com.chip.board.me.infrastructure.persistence.adapter;
 
 import com.chip.board.me.application.port.MeQueryPort;
 import lombok.RequiredArgsConstructor;

@@ -27,7 +27,6 @@ public class DailySolvedProblemQueryService {
             throw new ServiceException(ErrorCode.CHALLENGE_NOT_FOUND);
         }
 
-        ZoneId zone = clock.getZone();
         LocalDateTime start = date.atStartOfDay();
         LocalDateTime end = date.plusDays(1).atStartOfDay();
 
