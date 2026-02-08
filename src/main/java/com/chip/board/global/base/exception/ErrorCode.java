@@ -65,8 +65,8 @@ public enum ErrorCode {
     QNA_COMMENT_FORBIDDEN(HttpStatus.FORBIDDEN, "QNA_102", "해당 댓글에 대한 권한이 없습니다."),
 
     // 개인 기록 조회
-    INVALID_PAGE(HttpStatus.BAD_REQUEST, "INVALID_PAGE", "page 또는 size 값이 올바르지 않습니다.");
-
+    INVALID_PAGE(HttpStatus.BAD_REQUEST, "INVALID_PAGE", "page 또는 size 값이 올바르지 않습니다."),
+    INVALID_GOAL_POINTS(HttpStatus.BAD_REQUEST, "INVALID_GOAL_POINTS","0보다 큰 값을 입력해주세요");
 
     private final HttpStatus status;
     private final String code;

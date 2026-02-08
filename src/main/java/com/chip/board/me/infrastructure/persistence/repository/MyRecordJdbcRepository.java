@@ -61,5 +61,37 @@ public class MyRecordJdbcRepository {
                 userId, limitPlusOne, offset
         );
     }
+    public CurrentRow loadCurrent(long challengeId, long userId) {
+        return jdbc.query("""
+                SELECT cur.current_rank_no, cur.total_points
+                FROM challenge_user_result cur
+                WHERE cur.challenge_id = ?
+                  AND cur.user_id = ?
+                """,
+                rs -> rs.next()
+                        ? new CurrentRow((Integer) rs.getObject("current_rank_no"), rs.getLong("total_points"))
+                        : new CurrentRow(null, 0L),
+                challengeId, userId
+        );
+    }
+
+    /**
+     * 증가점수 기준: "오늘 00:00 ~ 현재" (KST는 DB 세션 타임존이 KST로 맞춰져 있다는 전제)
+     * 다른 기준 원하면 WHERE 절만 바꾸면 됩니다.
+     */
+    public long loadTodayDelta(long challengeId, long userId) {
+        Long v = jdbc.queryForObject("""
+                SELECT COALESCE(SUM(se.points), 0) AS delta
+                FROM score_event se
+                WHERE se.challenge_id = ?
+                  AND se.user_id = ?
+                  AND se.created_at >= TIMESTAMP(CURRENT_DATE)
+                """, Long.class, challengeId, userId);
+
+        return (v == null) ? 0L : v;
+    }
+
+    public record CurrentRow(Integer currentRank, long currentScore) {}
+
 }
 

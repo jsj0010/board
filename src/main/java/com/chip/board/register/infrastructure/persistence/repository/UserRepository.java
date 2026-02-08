@@ -24,6 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
         u.id,
         u.name,
         u.bojId,
+        u.studentId,
         u.department,
         coalesce(cur.solvedCount, 0),
         coalesce(cur.totalPoints, 0L),
@@ -36,7 +37,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     )
     from User u
     left join ChallengeUserResultEntity cur
-        on cur.id.userId = u.id
+        on cur.user.id = u.id
        and cur.id.challengeId = :challengeId
     order by
         case when cur.currentRankNo is null then 1 else 0 end asc,
@@ -44,6 +45,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
         u.id asc
 """)
     Page<ChallengeRankingRow> findRankingsAllUsers(@Param("challengeId") long challengeId, Pageable pageable);
+
+
 
     long countByDeletedFalse();
 }

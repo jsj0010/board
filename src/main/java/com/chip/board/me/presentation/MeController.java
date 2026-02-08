@@ -6,6 +6,7 @@ import com.chip.board.global.jwt.annotation.CurrentUserId;
 import com.chip.board.me.application.service.DailySolvedProblemQueryService;
 import com.chip.board.me.application.service.MyRecordQueryService;
 import com.chip.board.me.presentation.dto.response.DailySolvedProblemsResponse;
+import com.chip.board.me.presentation.dto.response.MyChallengeSummaryResponse;
 import com.chip.board.me.presentation.dto.response.MyRecordSummaryResponse;
 import com.chip.board.me.presentation.dto.response.MyRecordWeeksResponse;
 import com.chip.board.me.presentation.swagger.MeSwagger;
@@ -45,7 +46,7 @@ public class MeController implements MeSwagger {
     public ResponseEntity<ResponseBody<MyRecordSummaryResponse>> summary(
             @CurrentUserId Long userId
     ) {
-        MyRecordSummaryResponse res = myRecordQueryService.getSummary(userId);
+        MyRecordSummaryResponse res = myRecordQueryService.getMyRecordSummary(userId);
         return ResponseEntity.ok(ResponseUtils.createSuccessResponse(res));
     }
 
@@ -57,5 +58,14 @@ public class MeController implements MeSwagger {
     ) {
         MyRecordWeeksResponse res = myRecordQueryService.getWeeksSummary(userId, page, size);
         return ResponseEntity.ok(ResponseUtils.createSuccessResponse(res));
+    }
+
+    @GetMapping("/{challengeId}/summary")
+    public ResponseEntity<ResponseBody<MyChallengeSummaryResponse>> myChallengeProgressSummary(
+            @PathVariable Long challengeId,
+            @CurrentUserId Long userId
+    ) {
+        MyChallengeSummaryResponse data = myRecordQueryService.getMyChallengeProgressSummary(challengeId, userId);
+        return ResponseEntity.ok(ResponseUtils.createSuccessResponse(data));
     }
 }

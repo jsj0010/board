@@ -1,7 +1,6 @@
 package com.chip.board.score.application.service;
 
 import com.chip.board.challenge.application.port.ChallengeLoadPort;
-import com.chip.board.challenge.domain.Challenge;
 import com.chip.board.global.base.exception.ErrorCode;
 import com.chip.board.global.base.exception.ServiceException;
 import com.chip.board.register.application.port.UserRepositoryPort;
@@ -43,6 +42,7 @@ public class ChallengeRankingQueryService {
                                 r.currentRankNo(),
                                 r.name(),
                                 r.bojId(),
+                                maskStudentId(r.studentId()),
                                 r.department(),
                                 r.solvedCount(),
                                 r.totalPoints(),
@@ -65,5 +65,12 @@ public class ChallengeRankingQueryService {
                 nextPage,
                 items
         );
+    }
+
+    private static String maskStudentId(String studentId) {
+        if (studentId == null) return null;
+        int len = studentId.length();
+        if (len <= 4) return "*".repeat(len);
+        return studentId.substring(0, 4) + "*".repeat(len - 4);
     }
 }

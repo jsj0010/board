@@ -6,6 +6,7 @@ import com.chip.board.global.config.swagger.SwaggerApiFailedResponse;
 import com.chip.board.global.config.swagger.SwaggerApiResponses;
 import com.chip.board.global.config.swagger.SwaggerApiSuccessResponse;
 import com.chip.board.me.presentation.dto.response.DailySolvedProblemsResponse;
+import com.chip.board.me.presentation.dto.response.MyChallengeSummaryResponse;
 import com.chip.board.me.presentation.dto.response.MyRecordSummaryResponse;
 import com.chip.board.me.presentation.dto.response.MyRecordWeeksResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -114,5 +115,36 @@ public interface MeSwagger {
                     example = "10"
             )
             @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size
+    );
+
+    @Operation(
+            summary = "내 챌린지 진행 요약 조회",
+            description = """
+                    로그인한 사용자의 특정 챌린지 진행 요약을 조회합니다.
+                    - currentRank: 현재 순위
+                    - currentScore: 현재 점수
+                    - scoreDelta: 오늘 00:00~현재 증가 점수(서버 집계 기준)
+                    - goalScore: 사용자의 목표 점수(user.goal_points)
+                    - achievementRate: 달성률(0~1)
+                    """
+    )
+    @SwaggerApiResponses(
+            success = @SwaggerApiSuccessResponse(
+                    status = HttpStatus.OK,
+                    response = MyChallengeSummaryResponse.class,
+                    description = "내 챌린지 진행 요약 조회 성공"
+            ),
+            errors = {
+                    @SwaggerApiFailedResponse(ErrorCode.CHALLENGE_NOT_FOUND),
+                    @SwaggerApiFailedResponse(ErrorCode.USER_NOT_FOUND)
+            }
+    )
+    @GetMapping("/{challengeId}/progress-summary")
+    ResponseEntity<ResponseBody<MyChallengeSummaryResponse>> myChallengeProgressSummary(
+            @Parameter(hidden = true)
+            Long userId,
+
+            @Parameter(name = "challengeId", description = "챌린지 ID", required = true, example = "1")
+            @PathVariable("challengeId") Long challengeId
     );
 }

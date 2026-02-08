@@ -4,6 +4,7 @@ public record ChallengeRankingRow(
         long userId,
         String name,
         String bojId,
+        String studentId,
         String department,
         int solvedCount,
         long totalPoints,

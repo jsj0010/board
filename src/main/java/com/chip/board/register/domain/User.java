@@ -53,6 +53,9 @@ public class User {
     @Column(name = "boj_id", nullable = false, length = 64)
     private String bojId;
 
+    @Column(name = "goal_points", nullable = false, length = 64)
+    private long goalPoints;
+
     @Column(name = "is_deleted")
     private boolean deleted = false;
 
@@ -93,5 +96,10 @@ public class User {
 
     public void onLoginSuccess() {
         this.lastLoginAt = LocalDateTime.now();
+    }
+
+    public void changeGoalPoints(long goalPoints) {
+        if (goalPoints < 0) throw new IllegalArgumentException("goalPoints must be >= 0");
+        this.goalPoints = goalPoints;
     }
 }

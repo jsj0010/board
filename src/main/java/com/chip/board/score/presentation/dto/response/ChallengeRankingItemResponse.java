@@ -4,6 +4,7 @@ public record ChallengeRankingItemResponse(
         Integer rankNo,      // current_rank_no (없으면 null)
         String name,
         String bojId,
+        String studentId,
         String department,
         int solvedCount,     // 없으면 0
         long totalPoints,    // 없으면 0

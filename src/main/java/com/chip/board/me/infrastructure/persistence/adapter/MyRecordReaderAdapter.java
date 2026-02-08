@@ -3,6 +3,7 @@ package com.chip.board.me.infrastructure.persistence.adapter;
 import com.chip.board.global.base.exception.ErrorCode;
 import com.chip.board.global.base.exception.ServiceException;
 import com.chip.board.me.application.port.MyRecordReader;
+import com.chip.board.me.application.service.model.MyChallengeProgress;
 import com.chip.board.me.application.service.model.MyRecordSummary;
 import com.chip.board.me.application.service.model.MyRecordWeek;
 import com.chip.board.me.application.service.model.PagedResult;
@@ -44,5 +45,12 @@ public class MyRecordReaderAdapter implements MyRecordReader {
         if (hasNext) rows = rows.subList(0, size);
 
         return new PagedResult<>(rows, page, size, hasNext);
+    }
+
+    @Override
+    public MyChallengeProgress loadChallengeProgress(long userId, long challengeId) {
+        var cur = myRecordJdbcRepository.loadCurrent(challengeId, userId);
+        long delta = myRecordJdbcRepository.loadTodayDelta(challengeId, userId);
+        return new MyChallengeProgress(cur.currentRank(), cur.currentScore(), delta);
     }
 }
